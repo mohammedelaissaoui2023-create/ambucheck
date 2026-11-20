@@ -691,7 +691,7 @@ function sheetNewDisinf(){
   <label class="f" style="margin-top:0">Véhicule</label><select class="in" id="ndV"><option value="">Choisir le véhicule</option>${S.vehicles.map(v=>`<option value="${v.id}">${esc(v.name)}</option>`).join('')}</select>
   ${disinfForm('nd')}<button class="btn full" style="margin-top:16px" id="ndSave">${I('check')}Enregistrer la désinfection</button>`);
   $('#ndSave').onclick=()=>{const vid=$('#ndV').value;const d=readDisinf('nd');if(!vid||!d.product||!d.type||!d.zones.length)return toast('Choisissez le véhicule, le produit, le type et au moins une zone.',true);
-    const v=vById(vid);safe(async()=>{await P.db.collection('disinfection').doc().set({date:dkey(),createdAt:Date.now(),vehicleId:vid,vehicleName:v.name,product:d.product,type:d.type,zones:d.zones,obs:d.obs,uid:P.uid,intervenant:S.user.name});closeModal()},'Désinfection enregistrée')};
+    const v=vById(vid);const b=$('#ndSave');if(b.disabled)return;b.disabled=true;safe(async()=>{await P.db.collection('disinfection').doc().set({date:dkey(),createdAt:Date.now(),vehicleId:vid,vehicleName:v.name,product:d.product,type:d.type,zones:d.zones,obs:d.obs,uid:P.uid,intervenant:S.user.name});closeModal()},'Désinfection enregistrée').finally(()=>{b.disabled=false})};
 }
 /* =====================================================================
    Assistant de contrôle (départ / retour)
@@ -1030,7 +1030,7 @@ function sheetEditV(id){
   ${id?`<button class="btn ghost full" style="margin-top:8px;color:var(--stop)" id="evDel">${I('trash-2')}Supprimer ce véhicule</button>`:''}`);
   $('#evSave').onclick=()=>{const name=$('#evN').value.trim();if(!name)return toast('Le nom est obligatoire.',true);
     const d={name,plate:$('#evP').value.trim().toUpperCase(),model:$('#evM').value.trim(),year:$('#evY').value.trim(),km:Number($('#evK').value)||0,vin:$('#evV').value.trim(),insuranceUntil:$('#evI').value,ctUntil:$('#evC').value,status:document.querySelector('#evS .on').dataset.v,notes:$('#evO').value.trim()};
-    safe(async()=>{if(id)await P.db.doc('vehicles/'+id).update(d);else await P.db.collection('vehicles').doc().set({...d,createdAt:Date.now(),state:{status:'free'}});closeModal()},'Ambulance enregistrée')};
+    const b=$('#evSave');if(b.disabled)return;b.disabled=true;b.textContent='Enregistrement…';safe(async()=>{if(id)await P.db.doc('vehicles/'+id).update(d);else await P.db.collection('vehicles').doc().set({...d,createdAt:Date.now(),state:{status:'free'}});closeModal()},'Ambulance enregistrée').finally(()=>{b.disabled=false})};
   const del=$('#evDel');if(del)del.onclick=()=>confirmBox(`Supprimer <b>${esc(v.name)}</b> ? L’historique des contrôles est conservé.`,()=>safe(()=>P.db.doc('vehicles/'+id).delete(),'Véhicule supprimé'));
 }
 function sheetEditE(id){
@@ -1044,7 +1044,7 @@ function sheetEditE(id){
   <button class="btn full" style="margin-top:16px" id="eeSave">${I('check')}Enregistrer</button>${id?`<button class="btn ghost full" style="margin-top:8px;color:var(--stop)" id="eeDel">${I('trash-2')}Supprimer</button>`:''}`);
   $('#eeSave').onclick=()=>{const name=$('#eeN').value.trim();if(!name)return toast('Le nom est obligatoire.',true);
     const d={name,category:$('#eeC').value.trim(),qty:Number($('#eeQ').value)||null,serial:$('#eeS').value.trim(),expiry:$('#eeX').value,vehicleId:$('#eeV').value,levels:[...document.querySelectorAll('#eeL .on')].map(b=>b.dataset.z),notes:$('#eeO').value.trim()};
-    safe(async()=>{await (id?P.db.doc('equipment/'+id):P.db.collection('equipment').doc()).set(d);closeModal()},'Équipement enregistré')};
+    const b=$('#eeSave');if(b.disabled)return;b.disabled=true;b.textContent='Enregistrement…';safe(async()=>{await (id?P.db.doc('equipment/'+id):P.db.collection('equipment').doc()).set(d);closeModal()},'Équipement enregistré').finally(()=>{b.disabled=false})};
   const del=$('#eeDel');if(del)del.onclick=()=>confirmBox(`Supprimer <b>${esc(e.name)}</b> ?`,()=>safe(()=>P.db.doc('equipment/'+id).delete(),'Équipement supprimé'));
 }
 
