@@ -2,715 +2,1153 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AmbuCheck – Contrôle des ambulances</title>
-<meta name="theme-color" content="#0f2747">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23d62839'/%3E%3Cpath d='M42 20h16v22h22v16H58v22H42V58H20V42h22z' fill='white'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#0E1F3A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="AmbuCheck">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%231F5AA6'/%3E%3Cpath d='M42 20h16v22h22v16H58v22H42V58H20V42h22z' fill='white'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#0f2747;--navy2:#1b3a66;--red:#d62839;--green:#1f9d55;--amber:#d98e04;--bg:#f2f4f8;--card:#fff;--line:#e3e7ee;--muted:#6b7587;--txt:#152033;--r:14px}
-*{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+:root{
+  --ink:#0E1F3A;--ink-2:#33425C;--muted:#62708A;--line:#DCE3EC;--canvas:#EEF2F6;--surface:#FFFFFF;
+  --blue:#1F5AA6;--blue-d:#174683;--blue-2:#E6EEF9;
+  --go:#0E9467;--go-2:#E1F4EC;--warn:#D9690B;--warn-2:#FCEEDF;--stop:#D3303B;--stop-2:#FBE5E7;--grey-2:#EEF1F5;
+  --r-lg:22px;--r-md:14px;--r-sm:10px;
+  --shadow:0 1px 2px rgba(14,31,58,.06),0 6px 18px rgba(14,31,58,.06);
+  --safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--canvas);color:var(--ink);font:16px/1.45 Barlow,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 button,input,select,textarea{font:inherit;color:inherit}
-header{background:var(--navy);color:#fff;padding:12px 16px;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(0,0,0,.15)}
-.hrow{display:flex;align-items:center;gap:8px;min-width:0;max-width:960px;margin:0 auto}
-.logo{font-weight:800;font-size:18px;letter-spacing:.2px;display:flex;align-items:center;gap:8px}
-.logo span{background:var(--red);border-radius:8px;padding:2px 7px;font-size:15px}
-.today{font-size:13px;opacity:.85;text-transform:capitalize}
-.sp{flex:1}
-.role{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer;white-space:nowrap}
-.role b{font-weight:700}
-nav.tabs{display:flex;gap:6px;max-width:960px;margin:10px auto 0;overflow-x:auto}
-nav.tabs button{background:transparent;border:0;color:#c9d6ea;padding:7px 12px;border-radius:9px;cursor:pointer;white-space:nowrap;font-weight:600;font-size:14px}
-nav.tabs button.on{background:#fff;color:var(--navy)}
-main{max-width:960px;margin:0 auto;padding:14px 14px 90px}
-h2{font-size:19px;margin:6px 0 12px}
-h3{font-size:16px;margin:18px 0 8px}
-.muted{color:var(--muted)}.small{font-size:13px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:12px}
-.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
-.veh{cursor:default}
-.vtop{display:flex;align-items:center;gap:10px}
-.vic{width:42px;height:42px;border-radius:11px;background:#eaf0fa;display:grid;place-items:center;font-size:22px;flex:none}
-.vname{font-weight:700;font-size:16px}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
-.chip{font-size:12px;padding:3px 9px;border-radius:999px;background:#eef1f6;color:#3b475c;font-weight:600;white-space:nowrap}
-.chip.ok{background:#e3f5ea;color:#17703d}.chip.bad{background:#fde6e8;color:#a5162a}.chip.warn{background:#fff2d6;color:#8a5a00}
-.btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.btn{border:0;border-radius:11px;padding:11px 10px;font-weight:700;cursor:pointer;background:var(--navy);color:#fff;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-align:center}
-.btn.sec{background:#e9eef6;color:var(--navy)}
-.btn.red{background:var(--red)}.btn.green{background:var(--green)}.btn.amber{background:var(--amber)}
-.btn.ghost{background:transparent;color:var(--navy);border:1px solid var(--line)}
-.btn.sm{padding:7px 10px;font-size:13px;border-radius:9px}
+button{cursor:pointer}
+:focus-visible{outline:3px solid #8DB4EA;outline-offset:2px}
+.ic{width:1.15em;height:1.15em;vertical-align:-.2em;stroke-width:2.2;flex:none}
+.cond{font-family:"Barlow Semi Condensed",Barlow,system-ui,sans-serif}
+h1,h2,h3{margin:0;line-height:1.15;letter-spacing:-.01em}
+h1{font-size:30px;font-weight:800}
+h2{font-size:22px;font-weight:700}
+h3{font-size:17px;font-weight:700}
+p{margin:0}
+.muted{color:var(--muted)}.small{font-size:14px}.tiny{font-size:12.5px}
+.row{display:flex;align-items:center;gap:10px}.wrap{flex-wrap:wrap}.grow{flex:1;min-width:0}
+.stack>*+*{margin-top:12px}
+.hide{display:none!important}
+
+/* ---------- Shell ---------- */
+.top{position:sticky;top:0;z-index:30;background:var(--ink);color:#fff;padding:calc(10px + var(--safe-t)) 18px 10px}
+.top .tin{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px}
+.brand .mark{width:32px;height:32px;border-radius:9px;background:var(--blue);display:grid;place-items:center}
+.brand .mark svg{width:18px;height:18px}
+.top .who{font-size:13px;opacity:.8;text-align:right;line-height:1.2}
+.iconbtn{background:rgba(255,255,255,.1);border:0;color:#fff;width:38px;height:38px;border-radius:11px;display:grid;place-items:center}
+.layout{max-width:1180px;margin:0 auto;display:flex;gap:24px;padding:18px 16px calc(96px + var(--safe-b))}
+.side{display:none}
+main{flex:1;min-width:0}
+.bnav{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:1px solid var(--line);display:flex;padding:6px 6px calc(6px + var(--safe-b))}
+.bnav button{flex:1;background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;font-size:12px;font-weight:600;color:var(--muted);border-radius:12px;position:relative}
+.bnav button .ic{width:24px;height:24px}
+.bnav button.on{color:var(--blue)}
+.bnav button.on::before{content:"";position:absolute;top:-6px;left:30%;right:30%;height:3px;border-radius:0 0 3px 3px;background:var(--blue)}
+.dotn{position:absolute;top:2px;right:calc(50% - 22px);min-width:18px;height:18px;border-radius:9px;background:var(--stop);color:#fff;font-size:11px;display:grid;place-items:center;padding:0 5px}
+@media(min-width:960px){
+  .side{display:block;width:230px;flex:none}
+  .side nav{position:sticky;top:84px;display:flex;flex-direction:column;gap:4px}
+  .side button{display:flex;align-items:center;gap:12px;padding:12px 14px;border:0;border-radius:12px;background:none;font-weight:600;color:var(--ink-2);text-align:left;position:relative}
+  .side button .ic{width:20px;height:20px}
+  .side button.on{background:var(--surface);color:var(--blue);box-shadow:var(--shadow)}
+  .side .dotn{position:static;margin-left:auto}
+  .bnav{display:none}
+  .layout{padding-bottom:40px}
+}
+
+/* ---------- Surfaces ---------- */
+.card{background:var(--surface);border-radius:var(--r-lg);padding:18px;box-shadow:var(--shadow)}
+.card.flat{box-shadow:none;border:1px solid var(--line)}
+.sect{margin-top:26px}
+.sect>h2,.sect>.row>h2{margin-bottom:12px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.kpis{display:grid;gap:12px;grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--surface);border-radius:var(--r-md);padding:14px 16px;box-shadow:var(--shadow)}
+.kpi .n{font-family:"Barlow Semi Condensed",Barlow,system-ui,sans-serif;font-size:34px;font-weight:700;line-height:1}
+.kpi .l{font-size:14px;color:var(--muted);margin-top:4px}
+.kpi .m{font-size:13px;color:var(--ink-2);margin-top:6px}
+.kpi.stop .n{color:var(--stop)}.kpi.warn .n{color:var(--warn)}
+
+/* ---------- Plate (signature element) ---------- */
+.plate{display:inline-flex;align-items:stretch;border:2px solid var(--ink);border-radius:7px;overflow:hidden;background:#fff;font-family:"Barlow Semi Condensed",Barlow,system-ui,sans-serif;font-weight:700;font-size:15px;line-height:1;height:28px;flex:none}
+.plate .eu{background:#1D3E9E;color:#fff;font-size:10px;padding:0 4px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:3px}
+.plate .eu::before{content:"★";font-size:8px;color:#FFD400;margin-bottom:auto;margin-top:2px}
+.plate .num{padding:0 9px;display:flex;align-items:center;letter-spacing:.04em;text-transform:uppercase}
+.plate.big{height:38px;font-size:21px}.plate.big .eu{font-size:12px;padding:0 6px 4px}
+
+/* ---------- Vehicle cards ---------- */
+.veh{background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+.veh .band{height:8px;background:repeating-linear-gradient(90deg,var(--blue) 0 28px,#fff 28px 56px)}
+.veh.busy .band{background:repeating-linear-gradient(90deg,var(--warn) 0 28px,#fff 28px 56px)}
+.veh.off .band{background:#C6CEDA}
+.veh .body{padding:16px;display:flex;flex-direction:column;gap:12px;flex:1}
+.veh .name{font-size:20px;font-weight:800}
+.status{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:14px;padding:5px 11px;border-radius:999px}
+.status.go{background:var(--go-2);color:#0B7451}.status.busy{background:var(--warn-2);color:#A24D05}.status.off{background:var(--grey-2);color:var(--muted)}
+.status.stop{background:var(--stop-2);color:#A41F29}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:13px;font-weight:600;padding:3px 9px;border-radius:8px;background:var(--grey-2);color:var(--ink-2)}
+.tag.blue{background:var(--blue-2);color:var(--blue-d)}.tag.warn{background:var(--warn-2);color:#A24D05}.tag.stop{background:var(--stop-2);color:#A41F29}.tag.go{background:var(--go-2);color:#0B7451}
+
+/* ---------- Buttons ---------- */
+.btn{border:0;border-radius:13px;padding:13px 18px;font-weight:700;font-size:16px;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--blue);color:#fff;min-height:48px;text-decoration:none}
+.btn:hover{background:var(--blue-d)}
+.btn.sec{background:var(--blue-2);color:var(--blue-d)}
+.btn.ghost{background:transparent;color:var(--ink-2);border:1.5px solid var(--line)}
+.btn.go{background:var(--go)}.btn.warn{background:var(--warn)}.btn.stop{background:var(--stop)}
+.btn.sm{min-height:36px;padding:7px 12px;font-size:14px;border-radius:10px}
 .btn.full{width:100%}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.btn .bsub{display:block;font-weight:500;font-size:11px;opacity:.85}
-.btn.stack{flex-direction:column;gap:2px;padding:10px 6px}
-.done{outline:3px solid #7fd3a0;outline-offset:-3px}
-.back{background:none;border:0;color:var(--navy);font-weight:700;padding:4px 0;cursor:pointer;font-size:15px}
-.fhead{background:var(--navy2);color:#fff;border-radius:var(--r);padding:14px;margin-bottom:12px}
-.fhead .t{font-size:18px;font-weight:800}
-.sec{background:#fff;border:1px solid var(--line);border-radius:var(--r);margin-bottom:12px;overflow:hidden}
-.sech{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;user-select:none}
-.sech .ti{font-weight:700;flex:1}
-.sech .arr{transition:transform .2s;color:var(--muted)}
-.sec.closed .arr{transform:rotate(-90deg)}
-.sec.closed .secb{display:none}
-.prog{font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;background:#eef1f6;color:#3b475c}
-.prog.full{background:#e3f5ea;color:#17703d}.prog.haspb{background:#fde6e8;color:#a5162a}
-.secb{border-top:1px solid var(--line);padding:4px 14px 12px}
-.item{padding:10px 0;border-bottom:1px dashed var(--line)}
-.item:last-child{border-bottom:0}
-.irow{display:flex;align-items:center;gap:10px}
-.ilab{flex:1;font-size:14px}
-.seg{display:flex;gap:5px;flex:none}
-.seg button{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 10px;font-size:13px;font-weight:700;cursor:pointer;color:#4a5568;min-width:44px}
-.seg button.on.ok{background:var(--green);border-color:var(--green);color:#fff}
-.seg button.on.pb{background:var(--red);border-color:var(--red);color:#fff}
-.seg button.on.def{background:var(--amber);border-color:var(--amber);color:#fff}
-.icom{margin-top:8px;display:none}
-.item.need .icom{display:block}
-input[type=text],input[type=number],input[type=date],select,textarea{width:100%;border:1px solid #cfd6e2;border-radius:10px;padding:10px 11px;background:#fff}
-textarea{min-height:80px;resize:vertical}
-label.f{display:block;font-size:13px;font-weight:600;color:#3b475c;margin:10px 0 5px}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
-.slot{position:relative;aspect-ratio:4/3;border:2px dashed #b8c3d6;border-radius:12px;background:#f7f9fc;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;text-align:center;color:#4a5568;font-weight:700;font-size:13px}
-.slot.req::after{content:"obligatoire";position:absolute;top:6px;right:6px;font-size:10px;background:var(--red);color:#fff;border-radius:6px;padding:1px 5px;font-weight:700}
-.slot.has{border-style:solid;border-color:var(--green)}
-.slot.has::after{content:"✓";background:var(--green);font-size:12px;padding:1px 6px}
-.slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.slot .cam{font-size:26px;margin-bottom:4px}
-.slot .lbl{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.7));color:#fff;padding:14px 6px 5px;font-size:12px;z-index:2}
-.slot.busy::before{content:"Envoi…";position:absolute;inset:0;background:rgba(255,255,255,.8);display:grid;place-items:center;z-index:3;font-weight:800;color:var(--navy)}
-.slot input{display:none}
-.ref{font-size:11px;color:var(--muted);margin-top:4px;display:flex;gap:6px;align-items:center}
-.ref img{width:46px;height:34px;object-fit:cover;border-radius:5px;cursor:pointer}
-.xrm{position:absolute;top:5px;left:5px;z-index:4;background:rgba(0,0,0,.6);color:#fff;border:0;border-radius:7px;width:26px;height:26px;cursor:pointer;font-size:14px}
-.thumbs{display:flex;flex-wrap:wrap;gap:8px}
-.thumbs img,.ph{width:96px;height:72px;object-fit:cover;border-radius:9px;cursor:pointer;background:#e9edf3;border:1px solid var(--line)}
-.cmp{display:grid;grid-template-columns:90px 1fr 1fr;gap:8px;align-items:center;margin-bottom:8px}
-.cmp img,.cmp .none{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;cursor:pointer;background:#eef1f6;border:1px solid var(--line)}
-.cmp .none{display:grid;place-items:center;font-size:12px;color:var(--muted)}
-.cmph{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
-.pbl{list-style:none;padding:0;margin:6px 0}
-.pbl li{padding:7px 10px;border-radius:9px;background:#fff4f5;border:1px solid #f6c9cf;margin-bottom:6px;font-size:14px}
-.pbl li.def{background:#fff8e8;border-color:#f3d79a}
-.pbl li small{display:block;color:#7a2330;margin-top:2px}
-table{width:100%;border-collapse:collapse;font-size:14px}
-th,td{text-align:left;padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:top}
-th{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.link{background:none;border:0;color:var(--blue);font-weight:700;padding:0}
+
+/* ---------- Hero (employee) ---------- */
+.hello{padding:4px 2px 2px}
+.hello h1{font-size:32px}
+.hello p{color:var(--muted);text-transform:none}
+.mission{background:var(--ink);color:#fff;border-radius:var(--r-lg);padding:18px;display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden}
+.mission::after{content:"";position:absolute;right:-30px;top:-30px;width:140px;height:140px;border-radius:50%;border:18px solid rgba(255,255,255,.06)}
+.mission .t{font-size:22px;font-weight:800}
+.mission .s{opacity:.8}
+.reminder{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:var(--r-md);background:var(--warn-2);color:#7A3A04}
+.reminder.stop{background:var(--stop-2);color:#8A1820}
+.reminder.info{background:var(--blue-2);color:var(--blue-d)}
+.reminder .ic{margin-top:2px}
+
+/* ---------- Forms ---------- */
+label.f{display:block;font-size:14px;font-weight:600;color:var(--ink-2);margin:14px 0 6px}
+.in{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 13px;background:#fff;min-height:48px}
+.in:focus{border-color:var(--blue);outline:none}
+textarea.in{min-height:96px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.two{grid-template-columns:1fr}}
+.seg{display:flex;background:var(--grey-2);border-radius:13px;padding:4px;gap:4px}
+.seg button{flex:1;border:0;background:none;padding:10px;border-radius:10px;font-weight:700;color:var(--muted)}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:var(--shadow)}
+.seg button:disabled{opacity:.4}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font-weight:600;font-size:14px}
+.chips button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+
+/* ---------- Auth ---------- */
+.auth{min-height:100vh;display:grid;grid-template-columns:1fr;background:var(--ink)}
+.auth .art{color:#fff;padding:calc(28px + var(--safe-t)) 24px 30px;display:flex;flex-direction:column;gap:14px}
+.auth .art h1{font-size:40px;font-weight:800;max-width:12ch}
+.auth .art p{opacity:.75;max-width:36ch}
+.auth .art .band{height:12px;border-radius:6px;background:repeating-linear-gradient(90deg,var(--blue) 0 36px,#fff 36px 72px);max-width:340px;margin-top:6px}
+.auth .panel{background:var(--canvas);border-radius:28px 28px 0 0;padding:26px 20px calc(30px + var(--safe-b))}
+.auth .panel .box{max-width:420px;margin:0 auto}
+@media(min-width:900px){.auth{grid-template-columns:1.1fr 1fr}.auth .art{justify-content:center;padding:60px}.auth .art h1{font-size:56px}.auth .panel{border-radius:0;display:flex;align-items:center}}
+
+/* ---------- Wizard ---------- */
+.wz{max-width:640px;margin:0 auto}
+.wzhead{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.prog{display:flex;gap:6px;margin:4px 0 18px}
+.prog span{flex:1;height:6px;border-radius:3px;background:#D5DDE8}
+.prog span.done{background:var(--go)}.prog span.cur{background:var(--blue)}
+.steptitle{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.steptitle .ico{width:44px;height:44px;border-radius:13px;background:var(--blue-2);color:var(--blue);display:grid;place-items:center}
+.steptitle .ico .ic{width:24px;height:24px}
+.wzfoot{position:fixed;left:0;right:0;bottom:0;z-index:31;background:#fff;border-top:1px solid var(--line);padding:12px 16px calc(12px + var(--safe-b))}
+.wzfoot .in2{max-width:640px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.wzfoot .hint{flex:1;font-size:13px;color:var(--muted)}
+.shots{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:600px){.shots{grid-template-columns:repeat(3,1fr)}}
+.shot{position:relative;aspect-ratio:4/3;border-radius:16px;border:2px dashed #AFC0D6;background:#F7F9FC;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;overflow:hidden;font-weight:700;font-size:14px;color:var(--ink-2);text-align:center;padding:8px}
+.shot .ic{width:28px;height:28px;color:var(--blue)}
+.shot.ok{border:2px solid var(--go)}
+.shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.shot .cap{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.72));color:#fff;padding:18px 8px 7px;font-size:13px;text-align:left}
+.shot .req{position:absolute;top:7px;right:7px;font-size:11px;background:var(--ink);color:#fff;border-radius:6px;padding:2px 6px}
+.shot.ok .req{background:var(--go)}
+.shot.busy::after{content:"Envoi…";position:absolute;inset:0;background:rgba(255,255,255,.85);display:grid;place-items:center;color:var(--blue);font-weight:800}
+.shot input,.addph input{display:none}
+.checkgroup{background:#fff;border-radius:var(--r-lg);box-shadow:var(--shadow);margin-top:14px;overflow:hidden}
+.checkgroup .gh{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.checkgroup .gh h3{flex:1}
+.counter{font-family:"Barlow Semi Condensed",Barlow,system-ui,sans-serif;font-weight:700;font-size:15px;color:var(--muted)}
+.counter.full{color:var(--go)}.counter.pb{color:var(--stop)}
+.ck{padding:12px 16px;border-bottom:1px solid #EEF1F5}
+.ck:last-child{border-bottom:0}
+.ck .q{display:flex;align-items:center;gap:12px}
+.ck .lab{flex:1;font-weight:500}
+.tog{display:flex;gap:6px;flex:none}
+.tog button{border:1.5px solid var(--line);background:#fff;border-radius:11px;min-width:54px;height:42px;padding:0 10px;font-weight:700;font-size:14px;color:var(--ink-2)}
+.tog button.on.ok{background:var(--go);border-color:var(--go);color:#fff}
+.tog button.on.pb,.tog button.on.abs{background:var(--stop);border-color:var(--stop);color:#fff}
+.tog button.on.def{background:var(--warn);border-color:var(--warn);color:#fff}
+.decl{display:none;margin-top:10px;background:var(--stop-2);border-radius:12px;padding:12px}
+.ck.need .decl{display:block}
+.decl .row{margin-top:8px}
+.addph{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:14px;color:var(--stop);cursor:pointer}
+.decl img{width:64px;height:48px;object-fit:cover;border-radius:8px}
+@media(max-width:420px){.ck .q{flex-wrap:wrap}.tog{width:100%}.tog button{flex:1}}
+
+/* ---------- Lists / tables ---------- */
+.list>.li{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #EEF1F5}
+.list>.li:last-child{border-bottom:0}
+.list>.li.click{cursor:pointer}
+.li .ttl{font-weight:700}
+.badge{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none;background:var(--grey-2);color:var(--ink-2)}
+.badge.stop{background:var(--stop-2);color:var(--stop)}.badge.warn{background:var(--warn-2);color:var(--warn)}.badge.go{background:var(--go-2);color:var(--go)}.badge.blue{background:var(--blue-2);color:var(--blue)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:11px 8px;border-bottom:1px solid #EEF1F5;vertical-align:top}
+th{font-size:13px;color:var(--muted);font-weight:600}
 .tw{overflow-x:auto}
-.banner{border-radius:12px;padding:10px 12px;margin-bottom:12px;font-size:14px}
-.banner.warn{background:#fff2d6;color:#6b4600;border:1px solid #f1d28c}
-.banner.info{background:#e8f0fd;color:#1b3a66;border:1px solid #c5d6f5}
-.banner.bad{background:#fde6e8;color:#8b1424;border:1px solid #f5bcc4}
-.sticky{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));z-index:15}
-.sticky .in{max-width:960px;margin:0 auto;display:flex;gap:10px;align-items:center}
-.modal{position:fixed;inset:0;background:rgba(10,20,40,.55);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px}
-.mbox{background:#fff;border-radius:16px;padding:18px;max-width:440px;width:100%;max-height:90vh;overflow:auto}
-.mbox h3{margin-top:0}
-.mact{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
-.lb{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:60;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:12px}
-.lb img{max-width:100%;max-height:85vh;border-radius:8px}
-.lb .cap{color:#fff;margin-top:10px;font-size:14px;text-align:center}
-.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#152033;color:#fff;padding:11px 16px;border-radius:12px;z-index:70;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:90vw;text-align:center}
-.toast.err{background:var(--red)}
-.empty{text-align:center;padding:30px 10px;color:var(--muted)}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
-.kpi{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:12px}
-.kpi b{display:block;font-size:24px}
-.kpi span{font-size:12px;color:var(--muted)}
-.list a,.lrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
-.lrow:last-child{border-bottom:0}
-.dot{width:10px;height:10px;border-radius:50%;flex:none;background:#c5cdd9}
-.dot.ok{background:var(--green)}.dot.bad{background:var(--red)}.dot.warn{background:var(--amber)}
-.insp{border-left:4px solid var(--navy2)}
-.insp.t-retour{border-left-color:var(--green)}.insp.t-quinzaine{border-left-color:var(--amber)}
-.inline{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.login{max-width:380px;margin:30px auto}
-.login .logo{color:var(--navy);font-size:24px;justify-content:center;margin-bottom:6px}
-.hbtn{background:transparent;border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:999px;padding:6px 10px;font-size:13px;cursor:pointer}
-@media print{header,nav,.btn,.back,.sticky,.banner,.noprint{display:none!important}body,main{background:#fff}.card{break-inside:avoid;border-color:#ccc}}
-@media (max-width:600px){.kpis{grid-template-columns:repeat(2,1fr)}.cmp{grid-template-columns:64px 1fr 1fr}.seg button{padding:7px 8px;min-width:40px}}
+.subtabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px}
+.subtabs button{border:0;background:#fff;border-radius:999px;padding:9px 15px;font-weight:700;font-size:14px;color:var(--ink-2);white-space:nowrap;box-shadow:var(--shadow)}
+.subtabs button.on{background:var(--ink);color:#fff}
+
+/* ---------- Calendar ---------- */
+.cal{max-width:620px;background:#fff;border-radius:var(--r-lg);box-shadow:var(--shadow);padding:14px}
+.calh{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.calh h3{flex:1;text-transform:capitalize}
+.calg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.calg .dn{font-size:12px;color:var(--muted);text-align:center;padding:4px 0;font-weight:600}
+.day{aspect-ratio:1/1;border:0;border-radius:11px;background:#F5F7FA;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:6px 2px 5px;font-weight:700;font-size:15px;color:var(--ink);min-height:44px}
+.day.out{visibility:hidden}
+.day.today{box-shadow:inset 0 0 0 2px var(--blue)}
+.day.sel{background:var(--ink);color:#fff}
+.day .dots{display:flex;gap:3px;height:6px}
+.day .dots i{width:6px;height:6px;border-radius:50%;display:block}
+.d-blue{background:var(--blue)}.d-go{background:var(--go)}.d-warn{background:var(--warn)}.d-stop{background:var(--stop)}.d-ink{background:var(--ink-2)}
+.legend{max-width:620px;display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:8px;height:8px;border-radius:50%;display:inline-block}
+
+/* ---------- Photos compare ---------- */
+.cmp{max-width:780px;display:grid;grid-template-columns:110px 1fr 1fr;gap:8px;align-items:center;margin-top:8px}
+.cmp img,.cmp .none{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;background:var(--grey-2);cursor:zoom-in}
+.cmp .none{display:grid;place-items:center;font-size:12px;color:var(--muted);cursor:default}
+@media(max-width:520px){.cmp{grid-template-columns:72px 1fr 1fr}}
+.thumbs{display:flex;flex-wrap:wrap;gap:8px}
+.thumbs img{width:84px;height:63px;object-fit:cover;border-radius:9px;cursor:zoom-in;background:var(--grey-2)}
+
+/* ---------- Overlays ---------- */
+.modal{position:fixed;inset:0;z-index:60;background:rgba(14,31,58,.55);display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:#fff;width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:24px 24px 0 0;padding:20px 18px calc(22px + var(--safe-b));animation:up .22s ease-out}
+@media(min-width:700px){.modal{align-items:center}.sheet{border-radius:24px}}
+@keyframes up{from{transform:translateY(30px);opacity:.4}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.sheet{animation:none}}
+.sheet .sh{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.sheet .sh h2{flex:1}
+.choice{display:flex;align-items:center;gap:14px;width:100%;text-align:left;border:1.5px solid var(--line);background:#fff;border-radius:16px;padding:14px;margin-top:10px}
+.choice:hover{border-color:var(--blue)}
+.choice .t{font-weight:800;font-size:17px}
+.lb{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px}
+.lb img{max-width:100%;max-height:84vh;border-radius:10px}
+.lb p{color:#fff;margin-top:10px}
+.toast{position:fixed;left:50%;bottom:calc(96px + var(--safe-b));transform:translateX(-50%);z-index:80;background:var(--ink);color:#fff;padding:12px 18px;border-radius:14px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.25);max-width:92vw;text-align:center}
+.toast.err{background:var(--stop)}
+.empty{text-align:center;padding:34px 14px;color:var(--muted)}
+.empty .ic{width:40px;height:40px;color:#AFC0D6;margin-bottom:8px}
+.banner{border-radius:14px;padding:12px 14px;margin-bottom:14px;font-size:15px}
+.banner.warn{background:var(--warn-2);color:#7A3A04}.banner.stop{background:var(--stop-2);color:#8A1820}
+@media print{.top,.bnav,.side,.btn,.wzfoot,.noprint{display:none!important}body{background:#fff}.card,.cal{box-shadow:none;border:1px solid #ccc}}
 </style>
 </head>
 <body>
-<header>
-  <div class="hrow">
-    <div>
-      <div class="logo"><span>✚</span>AmbuCheck</div>
-      <div class="today" id="today"></div>
-    </div>
-    <div class="sp"></div>
-    <button class="role" id="roleBtn" data-act="switchMode" hidden></button>
-    <button class="hbtn" id="outBtn" data-act="logout" hidden title="Se déconnecter">Sortir</button>
-  </div>
-  <nav class="tabs" id="tabs"></nav>
-</header>
-<main id="app"><div class="empty">Chargement…</div></main>
+<div id="app"></div>
 <div id="layer"></div>
-
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
 <script>window.FIREBASE_CONFIG = {apiKey:"AIzaSyA0tbZxvslberY0UiolsVwo2CzRKlleyFU",authDomain:"ambucheck-6df57.firebaseapp.com",projectId:"ambucheck-6df57",storageBucket:"ambucheck-6df57.firebasestorage.app",messagingSenderId:"34388929743",appId:"1:34388929743:web:fcf74a8e292a7cce7cdbba"};</script>
 <script>
-/* ================= CONFIGURATION DES CONTRÔLES ================= */
-const DAILY = [
-  {id:'meca', icon:'⚙️', title:'Mécanique', items:[
-    ['moteur','Démarrage moteur, pas de bruit anormal'],['voyants','Voyants du tableau de bord éteints'],
-    ['freins','Freins et frein à main'],['direction','Direction'],['pneus','Pneus (usure, pression, crevaison)'],
-    ['feux','Feux, clignotants, feux stop'],['gyro','Gyrophares et sirène'],['essuie','Essuie-glaces'],['klaxon','Klaxon / avertisseur']]},
-  {id:'ext', icon:'🚑', title:'Extérieur du véhicule', items:[
-    ['carros','Carrosserie (rayures, chocs, bosses)'],['vitres','Pare-brise et vitres'],['retro','Rétroviseurs'],
-    ['portes','Portes latérales et hayon arrière'],['propext','Propreté extérieure'],['plaques','Plaques et signalétique']]},
-  {id:'liq', icon:'🛢️', title:'Liquides', items:[
-    ['huile','Niveau huile moteur'],['refroid','Liquide de refroidissement'],['lfrein','Liquide de frein'],
-    ['laveglace','Lave-glace'],['adblue','AdBlue (si équipé)']]},
-  {id:'sante', icon:'🩺', title:'Sanitaire & équipement', items:[
-    ['o2','Bouteille oxygène principale (pression suffisante)'],['o2port','Bouteille oxygène portable'],
-    ['lit','Brancard / lit (fixations, sangles, roues)'],['chaise','Chaise portoir'],['dsa','Défibrillateur (DSA) chargé'],
-    ['aspi','Aspirateur de mucosités'],['sac','Sac d’urgence complet'],['cellule','Cellule sanitaire propre et désinfectée'],
-    ['linge','Draps, couvertures, oreiller'],['epi','Gants, masques, gel hydroalcoolique']]}
-];
-const RETOUR = [
-  {id:'rext', icon:'🚑', title:'Extérieur – nouveaux dégâts ?', items:[
-    ['carros','Carrosserie sans nouveau dégât'],['vitres','Vitres et rétroviseurs intacts'],['pneus','Pneus en bon état'],['propext','Propreté extérieure']]},
-  {id:'rcell', icon:'🧼', title:'Cellule sanitaire', items:[
-    ['desinf','Désinfection faite après le dernier transport'],['propint','Cellule propre et rangée'],['lit','Brancard / lit en bon état'],
-    ['o2','Oxygène restant suffisant (sinon signaler)'],['consommables','Consommables utilisés signalés / remplacés'],['dechets','Déchets DASRI évacués']]},
-  {id:'rmeca', icon:'⚙️', title:'Mécanique pendant la journée', items:[
-    ['conduite','Aucune anomalie de conduite (freins, direction, boîte)'],['voyants','Aucun voyant allumé'],['bruits','Aucun bruit anormal']]}
-];
-const QUINZ = [
-  {id:'qo2', icon:'🫁', title:'Oxygénothérapie', items:[
-    ['b1','Bouteille O2 principale (pression, date)'],['b2','Bouteille O2 portable (pression, date)'],['mano','Manodétendeurs / débitmètres'],
-    ['mhc','Masques haute concentration adulte'],['mhce','Masques haute concentration enfant'],['lun','Lunettes à oxygène']]},
-  {id:'qrea', icon:'❤️', title:'Ventilation & réanimation', items:[
-    ['bavu','BAVU adulte'],['bavue','BAVU enfant / nourrisson'],['guedel','Canules de Guedel (toutes tailles)'],
-    ['dsa','DSA + électrodes de rechange (adulte / enfant)'],['aspi','Aspirateur + sondes d’aspiration']]},
-  {id:'qdiag', icon:'🩺', title:'Matériel de diagnostic', items:[
-    ['tensio','Tensiomètre'],['oxy','Oxymètre de pouls'],['thermo','Thermomètre'],['gluco','Glucomètre + bandelettes'],['stetho','Stéthoscope']]},
-  {id:'qimmo', icon:'🦴', title:'Immobilisation & brancardage', items:[
-    ['collier','Colliers cervicaux (toutes tailles)'],['attelles','Attelles'],['coquille','Matelas coquille + pompe'],
-    ['plan','Plan dur + sangles + immobilisateur de tête'],['chaise','Chaise portoir'],['brancard','Brancard principal']]},
-  {id:'qsoin', icon:'🩹', title:'Soins & hygiène', items:[
-    ['pans','Pansements, compresses, bandes'],['brul','Kit brûlés'],['accouch','Kit accouchement'],['survie','Couvertures de survie'],
-    ['gants','Gants (toutes tailles)'],['masques','Masques chirurgicaux / FFP2'],['sha','Solution hydroalcoolique'],
-    ['dasri','Sacs DASRI + collecteur à aiguilles'],['peremp','Dates de péremption vérifiées']]},
-  {id:'qsecu', icon:'🧯', title:'Sécurité du véhicule', items:[
-    ['ext','Extincteur (date de validité)'],['triangle','Triangle de signalisation'],['gilets','Gilets haute visibilité'],
-    ['lampe','Lampe torche'],['papiers','Papiers du véhicule / assurance']]}
-];
-const ANGLES = [['avant','Avant',true],['arriere','Arrière',true],['gauche','Côté gauche',true],['droit','Côté droit',true],['interieur','Cellule intérieure',false]];
-const FUEL = ['Plein','3/4','1/2','1/4','Réserve'];
-const MAINT = [
-  ['vidange','Vidange huile moteur + filtre',15000,365],
-  ['filtres','Filtres (air, habitacle, gasoil)',30000,730],
-  ['freins','Plaquettes et disques de frein',30000,null],
-  ['pneus','Pneus (permutation / remplacement)',40000,null],
-  ['boite','Boîte de vitesses (huile, contrôle)',60000,730],
-  ['moteur','Contrôle moteur / diagnostic électronique',null,365],
-  ['distribution','Courroie / kit de distribution',120000,1825],
-  ['refroid','Liquide de refroidissement',null,730],
-  ['batterie','Batterie',null,365],
-  ['clim','Climatisation',null,365],
-  ['revision','Révision générale constructeur',30000,365],
-  ['ct','Contrôle technique',null,365]
-];
-const TYPES = {depart:{lbl:'Départ',full:'Avant utilisation – Départ',icon:'🚦',sections:DAILY,photos:true,km:true},
-               retour:{lbl:'Retour',full:'Après utilisation – Retour',icon:'🏁',sections:RETOUR,photos:true,km:true},
-               quinzaine:{lbl:'Contrôle 15 j',full:'Contrôle global du matériel (15 jours)',icon:'🧰',sections:QUINZ,photos:false,km:false,tri:true}};
+/* =====================================================================
+   AmbuCheck v2 — contrôle des ambulances
+   ===================================================================== */
 
-/* ================= UTILITAIRES ================= */
+/* ---------------- Listes de contrôle ---------------- */
+const LEVELS = {
+  daily:   {t:'Contrôle quotidien', s:'Avant chaque sortie. Photos, points essentiels, désinfection.', icon:'sun'},
+  '15j':   {t:'Contrôle 15 jours', s:'Plus complet : mécanique détaillée et inventaire du matériel.', icon:'calendar-range'},
+  monthly: {t:'Contrôle mensuel',  s:'Le plus complet : inventaire, hygiène du véhicule, documents.', icon:'calendar-check'}
+};
+const PHOTOS = [
+  ['avant','Avant',true],['arriere','Arrière',true],['conducteur','Côté conducteur',true],
+  ['passager','Côté passager',true],['compteur','Compteur : kilométrage et carburant',true],['cellule','Cellule sanitaire',false]
+];
+const FUEL = ['Plein','3/4','1/2','1/4','Réserve'];
+const MECA_DAILY = [
+  ['moteur','Moteur : démarrage, pas de bruit anormal'],['voyants','Voyants du tableau de bord éteints'],
+  ['freins','Freins et frein à main'],['pneus','Pneus : usure et pression'],
+  ['carros','Carrosserie : rayures, chocs, bosses'],['plaques','Plaques et signalétique'],
+  ['feux','Feux, gyrophares et sirène'],['huile','Niveau huile moteur'],
+  ['refroid','Liquide de refroidissement'],['adblue','Niveau AdBlue']
+];
+const MECA_EXTRA = [
+  ['lfrein','Liquide de frein'],['laveglace','Lave-glace et essuie-glaces'],['direction','Direction et suspension'],
+  ['batterie','Batterie (démarrage franc, cosses propres)'],['retro','Rétroviseurs et vitres'],
+  ['portes','Portes latérales, hayon et serrures'],['ceintures','Ceintures de sécurité (cabine et cellule)'],
+  ['eclcell','Éclairage de la cellule'],['clim','Chauffage et climatisation de la cellule'],['fuites','Absence de fuite sous le véhicule']
+];
+const SANI_DAILY = [
+  ['o2','Bouteille oxygène principale (pression suffisante)'],['o2port','Bouteille oxygène portable'],
+  ['lit','Brancard / lit (fixations, sangles, roues, couverture)'],['chaise','Chaise portoir'],
+  ['dsa','Défibrillateur (DSA) chargé'],['epi','Gants, masques, gel hydroalcoolique']
+];
+const INV_15 = [
+  {id:'q_o2',title:'Oxygénothérapie',items:[['mano','Manodétendeurs et débitmètres'],['mhc','Masques haute concentration adulte'],['mhce','Masques haute concentration enfant'],['lun','Lunettes à oxygène']]},
+  {id:'q_rea',title:'Ventilation et réanimation',items:[['bavu','BAVU adulte'],['bavue','BAVU enfant et nourrisson'],['guedel','Canules de Guedel (toutes tailles)'],['elec','Électrodes DSA de rechange'],['aspi','Aspirateur de mucosités et sondes']]},
+  {id:'q_diag',title:'Matériel de diagnostic',items:[['tensio','Tensiomètre'],['oxy','Oxymètre de pouls'],['thermo','Thermomètre'],['gluco','Glucomètre et bandelettes']]},
+  {id:'q_soin',title:'Soins et consommables',items:[['pans','Pansements, compresses, bandes'],['survie','Couvertures de survie'],['dasri','Sacs DASRI et collecteur à aiguilles'],['sha','Solution hydroalcoolique (réserve)']]}
+];
+const INV_MONTH = [
+  {id:'m_immo',title:'Immobilisation',items:[['collier','Colliers cervicaux (toutes tailles)'],['attelles','Attelles'],['coquille','Matelas coquille et pompe'],['plan','Plan dur, sangles, immobilisateur de tête']]},
+  {id:'m_kits',title:'Kits spécifiques',items:[['brul','Kit brûlés'],['accouch','Kit accouchement'],['hemo','Garrot et pansements hémostatiques'],['stetho','Stéthoscope']]},
+  {id:'m_secu',title:'Sécurité du véhicule',items:[['extinct','Extincteur (date de validité)'],['triangle','Triangle de signalisation'],['gilets','Gilets haute visibilité'],['lampe','Lampe torche'],['peremp','Dates de péremption vérifiées']]}
+];
+const HYGIENE = [
+  ['h_parois','Parois et plafond de la cellule nettoyés'],['h_sol','Sol de la cellule nettoyé'],['h_rang','Rangements vidés et nettoyés'],
+  ['h_poub','Poubelles et DASRI vidés'],['h_vent','Ventilation et filtres propres'],['h_cabine','Cabine conducteur propre']
+];
+const DOCS = [['carte','Carte grise'],['assur','Attestation d’assurance'],['constat','Constat amiable'],['carnet','Carnet d’entretien']];
+const RET_ROUTE = [['conduite','Conduite normale : freins, direction, boîte'],['rvoyants','Aucun voyant allumé pendant la route'],['bruits','Aucun bruit ou vibration anormale'],['temp','Température moteur normale']];
+const RET_EXT = [['rcarros','Carrosserie sans nouveau dégât'],['rvitres','Vitres et rétroviseurs intacts'],['rpneus','Pneus en bon état'],['rpropext','Propreté extérieure']];
+const RET_CELL = [['rdesinf','Désinfection faite après le dernier transport'],['rpropint','Cellule propre et rangée'],['ro2','Oxygène restant suffisant'],['rconso','Consommables utilisés remplacés ou signalés'],['rdasri','Déchets DASRI évacués']];
+const PRODUCTS = ['Surfanios Premium','Anios Oxy’Floor','Lingettes désinfectantes','Spray désinfectant','Eau de Javel diluée','Autre produit'];
+const DISINF_TYPES = ['Désinfection quotidienne','Désinfection après transport','Désinfection approfondie','Désinfection après patient contagieux','Nettoyage simple'];
+const ZONES = ['Cellule sanitaire','Brancard','Matériel médical','Poignées et surfaces de contact','Cabine conducteur','Sol'];
+const MAINT = [
+  ['vidange','Vidange huile moteur et filtre',15000,365],['filtres','Filtres air, habitacle, gasoil',30000,730],
+  ['freins','Plaquettes et disques de frein',30000,null],['pneus','Pneus',40000,null],
+  ['boite','Boîte de vitesses (huile, contrôle)',60000,730],['distribution','Courroie de distribution',120000,1825],
+  ['refroid','Liquide de refroidissement',null,730],['batterie','Batterie',null,730],['clim','Climatisation',null,365],
+  ['revision','Révision constructeur',30000,365],['ct','Contrôle technique',null,365]
+];
+
+/* ---------------- Utilitaires ---------------- */
+const $ = s => document.querySelector(s);
+const app = $('#app'), layer = $('#layer');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const I = (n,c='') => `<i data-lucide="${n}" class="ic ${c}"></i>`;
 const pad = n => String(n).padStart(2,'0');
 const dkey = (d=new Date()) => d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
-const fmtD = k => { if(!k) return '—'; const [y,m,d]=k.split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short',year:'numeric'}); };
-const fmtT = ts => new Date(ts).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-const daysBetween = (a,b) => Math.round((new Date(b+'T12:00')-new Date(a+'T12:00'))/864e5);
-const addDays = (k,n) => { const d=new Date(k+'T12:00'); d.setDate(d.getDate()+n); return dkey(d); };
+const mkey = (d=new Date()) => d.getFullYear()+'-'+pad(d.getMonth()+1);
+const parseD = k => { const [y,m,d]=k.split('-').map(Number); return new Date(y,m-1,d,12); };
+const addDays = (k,n) => { const d=parseD(k); d.setDate(d.getDate()+n); return dkey(d); };
+const diffDays = (a,b) => Math.round((parseD(b)-parseD(a))/864e5);
+const fD = k => k ? parseD(k).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}) : '';
+const fDs = k => k ? parseD(k).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'}) : '—';
+const fT = ts => new Date(ts).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
 const nf = n => (n==null||n==='')?'—':Number(n).toLocaleString('fr-FR');
 const rid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const first = s => (s||'').trim().split(/\s+/)[0]||'';
 function lsGet(k,d){try{const v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}}
 function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function icons(){try{window.lucide&&lucide.createIcons()}catch(e){}}
+const plate = (p,big) => `<span class="plate ${big?'big':''}"><span class="eu">F</span><span class="num">${esc(p||'——')}</span></span>`;
 
-/* ================= ÉTAT ================= */
-const P = {db:null,st:null,auth:null,uid:null,canWrite:true,unsubs:[]};
-const S = {setupDone:null,settingUp:false,vehicles:[],employees:[],inspections:[],maint:{},loaded:{},isAdmin:false,mode:'employee',
-           view:'home',vid:null,histDate:dkey(),vtab:'hist',form:null,me:'',profile:null,err:null};
+/* ---------------- État ---------------- */
+const P = {auth:null,db:null,uid:null,unsubs:[]};
+const S = {
+  user:null, role:null, loaded:{}, err:null,
+  vehicles:[], users:[], insp:[], issues:[], disinf:[], maint:{}, equip:[], planning:{}, files:[], staff:[], admins:[],
+  route:'home', params:{}, calMonth:mkey(), calDay:dkey(), sub:'veh', authTab:'login', settingUp:false, wz:null
+};
 
-/* ================= INITIALISATION FIREBASE ================= */
+/* ---------------- Firebase ---------------- */
 function init(){
-  document.getElementById('today').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  if(typeof firebase==='undefined'||!window.FIREBASE_CONFIG||!FIREBASE_CONFIG.apiKey){
-    $app.innerHTML='<div class="banner bad">Configuration Firebase manquante : collez votre configuration dans <b>firebase-config.js</b> (voir le guide).</div>';return}
+  if(typeof firebase==='undefined'||!window.FIREBASE_CONFIG||!FIREBASE_CONFIG.apiKey){app.innerHTML='<div class="empty">Configuration manquante.</div>';return}
   firebase.initializeApp(FIREBASE_CONFIG);
-  P.auth=firebase.auth();P.db=firebase.firestore();
+  P.auth=firebase.auth(); P.db=firebase.firestore();
   P.db.enablePersistence({synchronizeTabs:true}).catch(()=>{});
-  P.db.doc('config/setup').onSnapshot(s=>{S.setupDone=s.exists;if(S.view==='login'){const l=document.getElementById('setupLink');if(l)l.hidden=S.setupDone}},()=>{});
+  P.db.doc('config/admins').onSnapshot(s=>{S.admins=(s.exists&&s.data().uids)||[];if(!S.user&&S.route==='auth')paintAdminSlots()},()=>{});
   P.auth.onAuthStateChanged(u=>{
-    P.unsubs.forEach(f=>f());P.unsubs=[];S.loaded={};S.profile=null;S.vehicles=[];S.inspections=[];S.maint={};S.employees=[];
-    if(!u){P.uid=null;S.view='login';render();return}
-    P.uid=u.uid;S.view='loading';render();let first=true;
+    P.unsubs.forEach(f=>f()); P.unsubs=[]; S.loaded={}; S.user=null; S.role=null; S.err=null; clearTimeout(P.loadTimer);
+    if(!u){P.uid=null;S.route='auth';S.authTab='login';render();return}
+    P.uid=u.uid; S.route='loading'; render(); let firstSnap=true;
     P.unsubs.push(P.db.doc('users/'+u.uid).onSnapshot(sn=>{
       const d=sn.exists?sn.data():null;
-      if(!d||d.disabled){if(S.settingUp)return;S.profile=null;S.view='noaccess';render();return}
-      S.profile=d;S.me=d.name||u.email;S.isAdmin=d.role==='admin';
-      if(first){first=false;S.mode=S.isAdmin?lsGet('amb_mode','admin'):'employee';S.view=S.mode==='admin'?'dash':'home';subscribe()}
-      if(!S.isAdmin&&S.mode==='admin'){S.mode='employee';S.view='home'}
+      if(!d){ if(S.settingUp) return; S.route='noaccount'; render(); return; }
+      if(d.disabled){S.route='disabled';render();return}
+      S.user={id:u.uid,...d}; S.role=d.role;
+      if(firstSnap){firstSnap=false; S.route=S.role==='admin'?lsGet('amb_r_admin','dash'):'home'; if(S.role!=='admin'&&!['home','plan','disinf'].includes(S.route))S.route='home'; subscribe(); if(S.role==='admin')ensureAdminSlot();}
       soft();
-    },e=>{console.warn(e);S.view='noaccess';render()}));
+    },e=>{console.warn(e);S.route='noaccount';render()}));
   });
 }
+function ensureAdminSlot(){
+  const ref=P.db.doc('config/admins');
+  ref.get().then(s=>{const u=(s.exists&&s.data().uids)||[];if(!u.includes(P.uid)&&u.length<2)ref.set({uids:u.concat([P.uid])}).catch(()=>{})}).catch(()=>{});
+}
 function subscribe(){
-  const t=setTimeout(()=>{if(!S.loaded.vehicles){S.err='Les données ne sont pas encore accessibles. Vérifiez votre connexion internet.';soft()}},10000);
-  const onErr=name=>e=>{console.warn(name,e);S.err='Erreur de chargement ('+name+') : '+(e&&e.code||'inconnue');soft()};
   const add=f=>P.unsubs.push(f);
-  add(P.db.collection('vehicles').onSnapshot(s=>{clearTimeout(t);S.err=null;S.vehicles=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.name||'').localeCompare(b.name||'','fr',{numeric:true}));S.loaded.vehicles=1;soft()},onErr('véhicules')));
-  add(P.db.collection('users').onSnapshot(s=>{S.employees=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.name||'').localeCompare(b.name||'','fr'));S.loaded.emp=1;soft()},onErr('employés')));
-  add(P.db.collection('inspections').orderBy('createdAt','desc').limit(1500).onSnapshot(s=>{S.inspections=s.docs.map(d=>({id:d.id,...d.data()}));S.loaded.insp=1;soft()},onErr('contrôles')));
-  add(P.db.collection('maintenance').onSnapshot(s=>{const m={};s.docs.forEach(d=>m[d.id]=d.data());S.maint=m;soft()},onErr('maintenance')));
+  const on=(name,q,fn)=>add(q.onSnapshot(s=>{fn(s);S.loaded[name]=1;soft()},e=>{console.warn(name,e);S.err='Impossible de charger '+name+'. Vérifiez la connexion.';soft()}));
+  const map=s=>s.docs.map(d=>({id:d.id,...d.data()}));
+  const sortName=(a,b)=>(a.name||'').localeCompare(b.name||'','fr',{numeric:true});
+  on('véhicules',P.db.collection('vehicles'),s=>{S.vehicles=map(s).sort(sortName);S.err=null});
+  on('personnel',P.db.collection('users'),s=>S.users=map(s).sort(sortName));
+  on('contrôles',P.db.collection('inspections').orderBy('createdAt','desc').limit(2500),s=>S.insp=map(s));
+  on('signalements',P.db.collection('issues').orderBy('createdAt','desc').limit(800),s=>S.issues=map(s));
+  on('désinfection',P.db.collection('disinfection').orderBy('createdAt','desc').limit(2000),s=>S.disinf=map(s));
+  on('maintenance',P.db.collection('maintenance'),s=>{const m={};s.docs.forEach(d=>m[d.id]=d.data());S.maint=m});
+  on('équipements',P.db.collection('equipment'),s=>S.equip=map(s).sort(sortName));
+  on('planning',P.db.collection('planning'),s=>{const m={};s.docs.forEach(d=>m[d.id]=d.data());S.planning=m});
+  if(S.role==='admin'){
+    on('documents',P.db.collection('files'),s=>S.files=map(s).sort((a,b)=>b.uploadedAt-a.uploadedAt));
+    on('personnel déclaré',P.db.collection('staff'),s=>S.staff=map(s).sort(sortName));
+  }
+  clearTimeout(P.loadTimer);P.loadTimer=setTimeout(()=>{if(P.uid&&!S.loaded['véhicules']){S.err='Les données ne répondent pas. Vérifiez votre connexion internet.';soft()}},12000);
 }
-// ne pas effacer un formulaire en cours de saisie
-function soft(){ if(S.view==='login')return; if(S.view==='form'){ updateRefs(); return; } if(!document.querySelector('.modal'))render(); }
+function soft(){
+  if(S.route==='wizard'||S.route==='auth')return;
+  if(layer.querySelector('.modal'))return;
+  render();
+}
 
-/* ================= PHOTOS ================= */
-const photoCache={};
-function loadImage(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file);const i=new Image();i.onload=()=>{res(i)};i.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('Image illisible'))};i.src=u})}
-async function processPhoto(file,label,max,q){
-  const img=await loadImage(file);
-  let w=img.naturalWidth,h=img.naturalHeight;const sc=Math.min(1,max/Math.max(w,h));w=Math.round(w*sc);h=Math.round(h*sc);
-  const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.drawImage(img,0,0,w,h);
-  // tampon date / heure / véhicule sur la photo (preuve)
-  const fs=Math.max(14,Math.round(w/40));x.font='bold '+fs+'px sans-serif';
-  const txt=label+' • '+new Date().toLocaleString('fr-FR');const tw=x.measureText(txt).width;
-  x.fillStyle='rgba(0,0,0,.55)';x.fillRect(0,h-fs*1.8,tw+fs,fs*1.8);x.fillStyle='#fff';x.fillText(txt,fs/2,h-fs*0.55);
-  return c;
+/* ---------------- Photos (stockées dans Firestore) ---------------- */
+const phCache={};
+function loadImg(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file);const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error('Image illisible'));i.src=u})}
+async function photoData(file,label){
+  const img=await loadImg(file);let max=1400,q=.72,out='';
+  for(let k=0;k<7;k++){
+    let w=img.naturalWidth,h=img.naturalHeight;const sc=Math.min(1,max/Math.max(w,h));w=Math.round(w*sc);h=Math.round(h*sc);
+    const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.drawImage(img,0,0,w,h);
+    const fs=Math.max(14,Math.round(w/42));x.font='600 '+fs+'px Barlow,sans-serif';
+    const txt=label+'  '+new Date().toLocaleString('fr-FR');const tw=x.measureText(txt).width;
+    x.fillStyle='rgba(14,31,58,.7)';x.fillRect(0,h-fs*1.9,tw+fs*1.2,fs*1.9);x.fillStyle='#fff';x.fillText(txt,fs*.6,h-fs*.6);
+    out=c.toDataURL('image/jpeg',q); if(out.length<420000)break; max=Math.round(max*.85); q=Math.max(.45,q-.06);
+  }
+  return out;
 }
-const toBlob=(c,q)=>new Promise(r=>c.toBlob(r,'image/jpeg',q));
 async function savePhoto(file,label){
-  let max=1400,q=.72,data='';
-  for(let i=0;i<7;i++){const c=await processPhoto(file,label,max);data=c.toDataURL('image/jpeg',q);if(data.length<420000)break;max=Math.round(max*.85);q=Math.max(.45,q-.06)}
-  const ref=P.db.collection('photos').doc();await ref.set({d:data,uid:P.uid,t:Date.now()});photoCache['p:'+ref.id]=data;return {p:ref.id};
+  const d=await photoData(file,label);
+  const ref=P.db.collection('photos').doc();
+  await ref.set({d,uid:P.uid,t:Date.now()});
+  phCache[ref.id]=d; return ref.id;
 }
-function phKey(r){return r?(r.u?'u:'+r.s:r.a?'a:'+r.a:'p:'+r.p):''}
-function imgTag(r,cls='',cap=''){
-  if(!r)return '<div class="none">—</div>';
-  const k=phKey(r);const src=r.u?r.u:(photoCache[k]||'');
-  return `<img class="${cls}" data-ph="${esc(k)}" ${src?`src="${esc(src)}"`:''} data-act="lightbox" data-cap="${esc(cap)}" alt="${esc(cap)}" loading="lazy" onerror="this.style.opacity=.3">`;
+function img(id,cap=''){
+  if(!id)return '<div class="none">Pas de photo</div>';
+  return `<img data-ph="${esc(id)}" ${phCache[id]?`src="${phCache[id]}"`:''} data-act="zoom" data-cap="${esc(cap)}" alt="${esc(cap)}">`;
 }
 async function hydrate(){
-  const els=[...document.querySelectorAll('img[data-ph^="p:"]:not([src])')];
-  for(const el of els){const k=el.dataset.ph;const id=k.slice(2);
-    if(!photoCache[k]){try{const s=await P.db.doc('photos/'+id).get();photoCache[k]=s.exists?s.data().d:''}catch(e){photoCache[k]=''}}
-    if(photoCache[k])document.querySelectorAll(`img[data-ph="${k}"]`).forEach(i=>i.src=photoCache[k]);
-  }
+  const els=[...document.querySelectorAll('img[data-ph]:not([src])')];
+  const ids=[...new Set(els.map(e=>e.dataset.ph))];
+  await Promise.all(ids.map(async id=>{
+    if(!phCache[id]){try{const s=await P.db.doc('photos/'+id).get();phCache[id]=s.exists?s.data().d:''}catch(e){phCache[id]=''}}
+    if(phCache[id])document.querySelectorAll(`img[data-ph="${id}"]`).forEach(i=>i.src=phCache[id]);
+  }));
 }
 
-/* ================= DONNÉES DÉRIVÉES ================= */
-const vById=id=>S.vehicles.find(v=>v.id===id);
-const inspOf=(vid,type,date)=>S.inspections.filter(i=>i.vehicleId===vid&&(!type||i.type===type)&&(!date||i.date===date));
-function curKm(v){let k=Number(v.km)||0;S.inspections.forEach(i=>{if(i.vehicleId===v.id&&Number(i.km)>k)k=Number(i.km)});return k}
-function lastQuinz(vid){return inspOf(vid,'quinzaine')[0]||null}
-function quinzStatus(vid){const l=lastQuinz(vid);if(!l)return{cls:'bad',txt:'Contrôle 15 j jamais fait',due:true};
-  const d=daysBetween(l.date,dkey());const rest=15-d;
-  if(rest<0)return{cls:'bad',txt:'Contrôle 15 j en retard ('+(-rest)+' j)',due:true};
-  if(rest<=2)return{cls:'warn',txt:'Contrôle 15 j dans '+rest+' j',due:true};
-  return{cls:'ok',txt:'Contrôle 15 j OK ('+rest+' j restants)',due:false};}
-function pbCount(i){return Object.values(i.checks||{}).filter(c=>c.s&&c.s!=='ok').length}
+/* ---------------- Données dérivées ---------------- */
+const vById = id => S.vehicles.find(v=>v.id===id);
+const uName = id => (S.users.find(u=>u.id===id)||{}).name||'';
+const departs = vid => S.insp.filter(i=>i.kind==='depart'&&(!vid||i.vehicleId===vid));
+const retourOf = depId => S.insp.find(i=>i.kind==='retour'&&i.departId===depId);
+const vState = v => (v&&v.state)||{status:'free'};
+const inUse = v => vState(v).status==='in_use';
+function curKm(v){let k=Number(v.km)||0;S.insp.forEach(i=>{if(i.vehicleId===v.id&&Number(i.km)>k)k=Number(i.km)});return k}
+function lastLevel(vid,levels){return departs(vid).find(i=>levels.includes(i.level))||null}
+function dueInfo(vid){
+  const today=dkey();
+  const l15=lastLevel(vid,['15j','monthly']),lm=lastLevel(vid,['monthly']);
+  const n15=l15?addDays(l15.date,15):today, nm=lm?addDays(lm.date,30):today;
+  return {l15,lm,n15,nm,due15:n15<=today,dueM:nm<=today,late15:n15<today&&!!l15,lateM:nm<today&&!!lm,d15:diffDays(today,n15),dM:diffDays(today,nm)};
+}
 function maintItems(vid){
   const v=vById(vid);const km=v?curKm(v):0;const m=(S.maint[vid]&&S.maint[vid].items)||{};const today=dkey();
   return MAINT.map(([k,lbl,ik,id])=>{const it=m[k]||{};const intKm=it.intKm!==undefined?it.intKm:ik;const intD=it.intDays!==undefined?it.intDays:id;
     let st='none',nextKm=null,nextDate=null,remKm=null,remD=null;
     if(it.lastDate||it.lastKm!=null){st='ok';
-      if(intKm&&it.lastKm!=null){nextKm=Number(it.lastKm)+Number(intKm);remKm=nextKm-km;if(remKm<0)st='bad';else if(remKm<=1500&&st!=='bad')st='warn'}
-      if(intD&&it.lastDate){nextDate=addDays(it.lastDate,Number(intD));remD=daysBetween(today,nextDate);if(remD<0)st='bad';else if(remD<=30&&st==='ok')st='warn'}
+      if(intKm&&it.lastKm!=null){nextKm=Number(it.lastKm)+Number(intKm);remKm=nextKm-km;if(remKm<0)st='stop';else if(remKm<=1500)st='warn'}
+      if(intD&&it.lastDate){nextDate=addDays(it.lastDate,Number(intD));remD=diffDays(today,nextDate);if(remD<0)st='stop';else if(remD<=30&&st==='ok')st='warn'}
     }
-    return{k,lbl,intKm,intD,last:it,nextKm,nextDate,remKm,remD,st,km};});
+    return {k,lbl,intKm,intD,last:it,nextKm,nextDate,remKm,remD,st,km};});
 }
-function maintAlerts(vid){return maintItems(vid).filter(x=>x.st==='bad'||x.st==='warn')}
-
-/* ================= RENDU ================= */
-const $app=document.getElementById('app');
-function render(){
-  const rb=document.getElementById('roleBtn');
-  rb.hidden=!S.isAdmin||!S.profile;document.getElementById('outBtn').hidden=!P.uid;rb.innerHTML=S.mode==='admin'?'👔 <b>Admin</b> ⇄':'👷 <b>Employé</b> ⇄';rb.title='Changer de mode';
-  const tabs=document.getElementById('tabs');
-  if(S.mode==='admin'&&S.profile&&!['form','login','loading','noaccess'].includes(S.view)){
-    const T=[['dash','Tableau de bord'],['maint','Maintenance'],['manage','Véhicules & équipe']];
-    tabs.innerHTML=T.map(([v,l])=>`<button class="${(S.view===v||(v==='dash'&&S.view==='vehicle'))?'on':''}" data-act="go" data-v="${v}">${l}</button>`).join('');tabs.hidden=false;
-  }else{tabs.innerHTML='';tabs.hidden=true}
-  let h='';
-  if(!navigator.onLine)h+=`<div class="banner warn">Pas de connexion internet : les contrôles seront envoyés au retour du réseau (les photos nécessitent internet).</div>`;
-  if(S.err)h+=`<div class="banner bad">${esc(S.err)}</div>`;
-  const V={login:vLogin,loading:()=>'<div class="empty">Chargement…</div>',noaccess:vNoAccess,home:vHome,dash:vDash,vehicle:vVehicle,form:vForm,maint:vMaint,manage:vManage}[S.view]||vHome;
-  $app.innerHTML=h+V();
-  if(S.view==='form')afterForm();
-  hydrate();
+function equipFor(vid,level){
+  return S.equip.filter(e=>(!e.vehicleId||e.vehicleId===vid)&&(e.levels||[]).includes(level)).map(e=>['eq_'+e.id,e.name+(e.qty?` (×${e.qty})`:'')]);
 }
-
-/* ---------- Connexion ---------- */
-function vLogin(){
-  return `<div class="login card"><div class="logo"><span>✚</span>AmbuCheck</div><p class="muted small" style="text-align:center;margin-top:0">Contrôle des ambulances</p>
-  <form id="loginForm"><label class="f">Adresse e-mail</label><input type="text" id="lgE" autocomplete="username" inputmode="email" autocapitalize="off">
-  <label class="f">Mot de passe</label><input type="password" id="lgP" autocomplete="current-password" style="width:100%;border:1px solid #cfd6e2;border-radius:10px;padding:10px 11px">
-  <button class="btn full" style="margin-top:14px" type="submit">Se connecter</button></form>
-  <button class="back small" style="margin-top:10px;display:block;margin-left:auto;margin-right:auto" data-act="forgot">Mot de passe oublié ?</button>
-  <div id="setupLink" ${S.setupDone!==false?'hidden':''} style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px"><p class="small muted" style="margin:0 0 8px">Première utilisation : créez le compte administrateur (directeur).</p><button class="btn sec full" data-act="setup">Créer le compte administrateur</button></div></div>`;
-}
-function vNoAccess(){return `<div class="login card"><h2>Accès non autorisé</h2><p>Votre compte n’est pas (ou plus) activé. Contactez l’administrateur.</p><button class="btn full" data-act="logout">Se déconnecter</button></div>`}
-
-/* ---------- Employé : accueil ---------- */
-function vHome(){
-  const today=dkey();
-  let h=`<h2>Bonjour${S.me?' '+esc(S.me):''} 👋</h2>`;
-  if(!S.loaded.vehicles)return h+`<div class="empty">Chargement des véhicules…</div>`;
-  if(!S.vehicles.length)return h+`<div class="empty">Aucun véhicule pour l’instant.<br>${S.isAdmin?'Ajoutez vos ambulances dans « Véhicules & équipe » (mode admin).':'L’administrateur doit d’abord ajouter les ambulances.'}</div>`;
-  h+=`<h3>Véhicules – ${esc(fmtD(today))}</h3><div class="grid">`;
-  for(const v of S.vehicles){
-    const dep=inspOf(v.id,'depart',today)[0],ret=inspOf(v.id,'retour',today)[0],q=quinzStatus(v.id);
-    h+=`<div class="card veh"><div class="vtop"><div class="vic">🚑</div><div><div class="vname">${esc(v.name)}</div><div class="muted small">${esc(v.plate||'')} ${v.model?'· '+esc(v.model):''} · ${nf(curKm(v))} km</div></div></div>
-    <div class="chips"><span class="chip ${dep?'ok':''}">${dep?'✓ Départ '+fmtT(dep.createdAt)+' · '+esc(dep.employee):'Départ à faire'}</span>
-    <span class="chip ${ret?'ok':''}">${ret?'✓ Retour '+fmtT(ret.createdAt):'Retour à faire'}</span>
-    <span class="chip ${q.cls}">${esc(q.txt)}</span></div>
-    <div class="btns">
-      <button class="btn stack ${dep?'sec done':''}" data-act="start" data-t="depart" data-id="${v.id}">🚦 Départ<span class="bsub">avant utilisation</span></button>
-      <button class="btn stack green ${ret?'done':''}" data-act="start" data-t="retour" data-id="${v.id}">🏁 Retour<span class="bsub">après utilisation</span></button>
-      <button class="btn stack ${q.due?'amber':'sec'}" data-act="start" data-t="quinzaine" data-id="${v.id}">🧰 15 jours<span class="bsub">matériel</span></button>
-    </div></div>`;
-  }
-  return h+`</div>`;
-}
-
-/* ---------- Formulaire de contrôle ---------- */
-function startForm(type,vid){
-  if(!S.profile)return;
-  S.form={type,vid,checks:{},photos:{},extra:[],km:'',fuel:'',comment:'',busy:0,open:{}};
-  S.view='form';render();window.scrollTo(0,0);
-}
-function vForm(){
-  const f=S.form,T=TYPES[f.type],v=vById(f.vid);if(!v)return `<div class="empty">Véhicule introuvable</div>`;
-  const today=dkey();const dep=f.type==='retour'?inspOf(v.id,'depart',today)[0]:null;
-  let h=`<button class="back" data-act="cancelForm">← Annuler</button>
-  <div class="fhead"><div class="t">${T.icon} ${esc(T.full)}</div><div>${esc(v.name)} · ${esc(v.plate||'')}</div>
-  <div class="small" style="opacity:.85">${esc(fmtD(today))} · ${fmtT(Date.now())} · ${esc(S.me)}</div></div>`;
-  if(f.type==='retour'&&!dep)h+=`<div class="banner warn">Aucun contrôle de départ enregistré aujourd’hui pour ce véhicule.</div>`;
-  if(T.photos){
-    h+=`<div class="sec"><div class="sech" style="cursor:default"><span>📸</span><span class="ti">Photos du véhicule</span><span class="prog" id="phprog"></span></div><div class="secb" style="padding-top:12px">
-    <p class="small muted" style="margin:0 0 10px">Touchez une case pour prendre la photo avec l’appareil photo du téléphone. La date et l’heure sont imprimées sur chaque photo.</p><div class="photos">`;
-    for(const [k,l,req] of ANGLES){
-      const r=dep&&dep.photos&&dep.photos[k];
-      h+=`<div><label class="slot ${req?'req':''}" id="slot-${k}"><input type="file" accept="image/*" capture="environment" data-photo="${k}"><span class="cam">📷</span>${esc(l)}</label>
-      ${r?`<div class="ref">${imgTag(r,'','Départ – '+l)} photo du départ</div>`:''}</div>`;
-    }
-    h+=`</div><label class="f">Photos supplémentaires (dégâts, rayures, problème…)</label><div class="thumbs" id="extra"></div>
-    <label class="btn sec sm" style="margin-top:8px">➕ Ajouter une photo<input type="file" accept="image/*" capture="environment" data-photo="__extra" hidden></label></div></div>`;
-  }
-  if(T.km){
-    const lastKm=curKm(v);
-    h+=`<div class="sec"><div class="sech" style="cursor:default"><span>⛽</span><span class="ti">Kilométrage & carburant</span></div><div class="secb"><div class="row2">
-    <div><label class="f">Kilométrage compteur *</label><input type="number" inputmode="numeric" data-chg="km" placeholder="Dernier : ${nf(lastKm)}" value="${esc(f.km)}"></div>
-    <div><label class="f">Niveau carburant *</label><select data-chg="fuel"><option value="">—</option>${FUEL.map(x=>`<option ${f.fuel===x?'selected':''}>${x}</option>`).join('')}</select></div></div>
-    ${dep&&dep.km?`<div class="small muted" style="margin-top:6px">Départ ce matin : ${nf(dep.km)} km · ${esc(dep.fuel||'')}</div>`:''}</div></div>`;
-  }
-  T.sections.forEach((s,si)=>{
-    h+=`<div class="sec ${si>0&&!f.open[s.id]?'closed':''}" id="sec-${s.id}"><div class="sech" data-act="toggleSec" data-s="${s.id}"><span>${s.icon}</span><span class="ti">${esc(s.title)}</span><span class="prog" id="prog-${s.id}"></span><span class="arr">▾</span></div>
-    <div class="secb"><div style="text-align:right;margin:8px 0 2px"><button class="btn green sm" data-act="allOk" data-s="${s.id}">✓ Tout est OK</button></div>`;
-    for(const [k,l] of s.items){
-      const key=s.id+'.'+k;
-      h+=`<div class="item" id="it-${key.replace('.','_')}"><div class="irow"><div class="ilab">${esc(l)}</div><div class="seg">
-      <button class="ok" data-act="setS" data-k="${key}" data-v="ok">OK</button>
-      ${T.tri?`<button class="pb" data-act="setS" data-k="${key}" data-v="manque">Manque</button><button class="def" data-act="setS" data-k="${key}" data-v="def">Défect.</button>`
-             :`<button class="pb" data-act="setS" data-k="${key}" data-v="pb">Problème</button>`}
-      </div></div><div class="icom"><input type="text" data-com="${key}" placeholder="Commentaire obligatoire : décrivez le problème…"></div></div>`;
-    }
-    h+=`</div></div>`;
+function alerts(){
+  const A=[];const today=dkey();
+  S.vehicles.forEach(v=>{
+    const d=dueInfo(v.id);
+    if(d.late15)A.push({lvl:'stop',ic:'calendar-x',t:`${v.name} : contrôle 15 jours en retard`,s:`Prévu le ${fDs(d.n15)}`,go:['vehicle',v.id]});
+    else if(!d.l15)A.push({lvl:'warn',ic:'calendar-clock',t:`${v.name} : aucun contrôle 15 jours enregistré`,s:'À faire au prochain départ',go:['vehicle',v.id]});
+    if(d.lateM)A.push({lvl:'stop',ic:'calendar-x',t:`${v.name} : contrôle mensuel en retard`,s:`Prévu le ${fDs(d.nm)}`,go:['vehicle',v.id]});
+    maintItems(v.id).forEach(x=>{if(x.st==='stop')A.push({lvl:'stop',ic:'wrench',t:`${v.name} : ${x.lbl} en retard`,s:x.remKm!=null&&x.remKm<0?`Dépassé de ${nf(-x.remKm)} km`:`Depuis le ${fDs(x.nextDate)}`,go:['maint']});
+      else if(x.st==='warn')A.push({lvl:'warn',ic:'wrench',t:`${v.name} : ${x.lbl} bientôt`,s:x.remKm!=null&&x.remKm<=1500?`Dans ${nf(x.remKm)} km`:`Le ${fDs(x.nextDate)}`,go:['maint']})});
+    [['insuranceUntil','Assurance'],['ctUntil','Contrôle technique']].forEach(([f,l])=>{if(v[f]){const r=diffDays(today,v[f]);if(r<0)A.push({lvl:'stop',ic:'file-warning',t:`${v.name} : ${l} expiré`,s:`Depuis le ${fDs(v[f])}`,go:['vehicle',v.id]});else if(r<=30)A.push({lvl:'warn',ic:'file-clock',t:`${v.name} : ${l} expire bientôt`,s:`Le ${fDs(v[f])}`,go:['vehicle',v.id]})}});
+    if(inUse(v)&&Date.now()-vState(v).since>14*3600e3)A.push({lvl:'warn',ic:'clock-alert',t:`${v.name} en service depuis plus de 14 h`,s:`Avec ${vState(v).byName}, retour non enregistré`,go:['vehicle',v.id]});
   });
-  h+=`<div class="sec"><div class="sech" style="cursor:default"><span>📝</span><span class="ti">Commentaire général</span></div><div class="secb">
-  <textarea data-chg="comment" placeholder="Remarques, informations pour l’administrateur…">${esc(f.comment)}</textarea></div></div>
-  <div style="height:20px"></div>
-  <div class="sticky"><div class="in"><div class="small muted" id="fstat" style="flex:1"></div><button class="btn red" id="submitBtn" data-act="submit">Valider le contrôle</button></div></div>`;
-  return h;
+  S.equip.forEach(e=>{if(e.expiry){const r=diffDays(today,e.expiry);const v=e.vehicleId?vById(e.vehicleId):null;const where=v?v.name:'Tous les véhicules';
+    if(r<0)A.push({lvl:'stop',ic:'package-x',t:`${e.name} périmé`,s:`${where}, depuis le ${fDs(e.expiry)}`,go:['fleet','equip']});
+    else if(r<=30)A.push({lvl:'warn',ic:'package',t:`${e.name} périme bientôt`,s:`${where}, le ${fDs(e.expiry)}`,go:['fleet','equip']})}});
+  return A.sort((a,b)=>(a.lvl==='stop'?0:1)-(b.lvl==='stop'?0:1));
 }
-function afterForm(){
-  const f=S.form;
-  for(const k in f.checks)paintItem(k);
-  for(const k in f.photos)paintSlot(k);
-  paintExtra();progress();
-}
-function paintItem(key){
-  const f=S.form,c=f.checks[key]||{};const el=document.getElementById('it-'+key.replace('.','_'));if(!el)return;
-  el.querySelectorAll('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.v===c.s));
-  el.classList.toggle('need',!!c.s&&c.s!=='ok');
-  const inp=el.querySelector('[data-com]');if(inp&&c.c!=null&&inp.value!==c.c)inp.value=c.c;
-}
-function paintSlot(k){
-  const el=document.getElementById('slot-'+k);if(!el)return;const r=S.form.photos[k];const a=ANGLES.find(x=>x[0]===k);
-  el.classList.toggle('has',!!r);
-  el.innerHTML=`<input type="file" accept="image/*" capture="environment" data-photo="${k}">`+(r?imgTag(r,'',a[1]).replace('data-act="lightbox"','')+`<span class="lbl">${esc(a[1])} · toucher pour reprendre</span>`:`<span class="cam">📷</span>${esc(a[1])}`);
-  hydrate();
-}
-function paintExtra(){
-  const el=document.getElementById('extra');if(!el)return;
-  el.innerHTML=S.form.extra.map((r,i)=>`<div style="position:relative">${imgTag(r,'','Photo supplémentaire')}<button class="xrm" data-act="rmExtra" data-i="${i}">✕</button></div>`).join('')||'<span class="small muted">Aucune</span>';
-  hydrate();
-}
-function progress(){
-  const f=S.form,T=TYPES[f.type];let missing=0,pbNoCom=0;
-  T.sections.forEach(s=>{let n=0,pb=0;s.items.forEach(([k])=>{const c=f.checks[s.id+'.'+k];if(c&&c.s){n++;if(c.s!=='ok'){pb++;if(!(c.c||'').trim())pbNoCom++}}else missing++});
-    const el=document.getElementById('prog-'+s.id);if(el){el.textContent=(pb?pb+' ⚠ · ':'')+n+'/'+s.items.length;el.className='prog'+(pb?' haspb':n===s.items.length?' full':'')}});
-  let phMiss=0;if(T.photos){phMiss=ANGLES.filter(a=>a[2]&&!f.photos[a[0]]).length;const pe=document.getElementById('phprog');if(pe){const n=ANGLES.filter(a=>f.photos[a[0]]).length;pe.textContent=n+'/'+ANGLES.length;pe.className='prog'+(phMiss?'':' full')}}
-  const parts=[];if(phMiss)parts.push(phMiss+' photo(s) obligatoire(s)');if(missing)parts.push(missing+' point(s) à vérifier');if(pbNoCom)parts.push(pbNoCom+' commentaire(s) manquant(s)');
-  if(T.km){if(!f.km)parts.push('kilométrage');if(!f.fuel)parts.push('carburant')}
-  const st=document.getElementById('fstat');if(st)st.textContent=f.busy?'Envoi des photos…':parts.length?'Reste : '+parts.join(', '):'✓ Prêt à valider';
-  return{ok:!parts.length&&!f.busy,parts};
-}
-function updateRefs(){/* données reçues pendant la saisie : rien à redessiner */}
-
-/* ---------- Admin : tableau de bord ---------- */
-function vDash(){
-  const today=dkey();
-  if(!S.loaded.vehicles)return `<div class="empty">Chargement…</div>`;
-  const nV=S.vehicles.length,nDep=S.vehicles.filter(v=>inspOf(v.id,'depart',today).length).length,nRet=S.vehicles.filter(v=>inspOf(v.id,'retour',today).length).length;
-  const since=addDays(today,-7);const pbs=S.inspections.filter(i=>i.date>=since&&pbCount(i)>0);
-  const mAl=S.vehicles.reduce((n,v)=>n+maintAlerts(v.id).filter(x=>x.st==='bad').length,0);
-  let h=`<h2>Tableau de bord · ${esc(fmtD(today))}</h2>
-  <div class="kpis"><div class="kpi"><b>${nDep}/${nV}</b><span>Départs contrôlés</span></div><div class="kpi"><b>${nRet}/${nV}</b><span>Retours contrôlés</span></div>
-  <div class="kpi"><b style="color:${pbs.length?'var(--red)':'inherit'}">${pbs.length}</b><span>Signalements (7 j)</span></div><div class="kpi"><b style="color:${mAl?'var(--red)':'inherit'}">${mAl}</b><span>Entretiens en retard</span></div></div>`;
-  if(!nV)return h+`<div class="empty">Aucun véhicule. <br><button class="btn" style="margin-top:10px" data-act="go" data-v="manage">➕ Ajouter une ambulance</button></div>`;
-  h+=`<div class="grid">`;
-  for(const v of S.vehicles){
-    const dep=inspOf(v.id,'depart',today)[0],ret=inspOf(v.id,'retour',today)[0],q=quinzStatus(v.id),ma=maintAlerts(v.id);
-    const pbt=inspOf(v.id,null,today).reduce((n,i)=>n+pbCount(i),0);
-    h+=`<div class="card veh" style="cursor:pointer" data-act="openV" data-id="${v.id}"><div class="vtop"><div class="vic">🚑</div><div style="flex:1"><div class="vname">${esc(v.name)}</div><div class="muted small">${esc(v.plate||'')} · ${nf(curKm(v))} km</div></div><span class="muted">›</span></div>
-    <div class="chips"><span class="chip ${dep?'ok':'bad'}">${dep?'✓ Départ '+fmtT(dep.createdAt)+' · '+esc(dep.employee):'✗ Pas de départ'}</span>
-    <span class="chip ${ret?'ok':''}">${ret?'✓ Retour '+fmtT(ret.createdAt)+' · '+esc(ret.employee):'Retour en attente'}</span>
-    ${pbt?`<span class="chip bad">⚠ ${pbt} problème(s) aujourd’hui</span>`:''}
-    <span class="chip ${q.cls}">${esc(q.txt)}</span>
-    ${ma.length?`<span class="chip ${ma.some(x=>x.st==='bad')?'bad':'warn'}">🔧 ${ma.length} entretien(s) à prévoir</span>`:''}</div></div>`;
-  }
-  h+=`</div><h3>⚠ Signalements des 7 derniers jours</h3><div class="card">`;
-  if(!pbs.length)h+=`<div class="muted">Aucun problème signalé. 👍</div>`;
-  pbs.slice(0,30).forEach(i=>{const v=vById(i.vehicleId);
-    h+=`<div class="lrow" data-act="openV" data-id="${i.vehicleId}" data-d="${i.date}"><span class="dot bad"></span><div style="flex:1"><b>${esc(v?v.name:'?')}</b> · ${esc(TYPES[i.type]?.lbl||i.type)} · ${esc(fmtD(i.date))} ${fmtT(i.createdAt)}<div class="small muted">${esc(i.employee)} — ${pbList(i).map(p=>esc(p.lbl)).join(', ')}</div></div><span class="muted">›</span></div>`});
-  return h+`</div>`;
-}
-function itemLabel(type,key){const [sid,k]=key.split('.');const s=(TYPES[type]?.sections||[]).find(x=>x.id===sid);const it=s&&s.items.find(x=>x[0]===k);return it?it[1]:key}
-function pbList(i){return Object.entries(i.checks||{}).filter(([k,c])=>c.s&&c.s!=='ok').map(([k,c])=>({lbl:itemLabel(i.type,k),s:c.s,c:c.c}))}
-
-/* ---------- Admin : fiche véhicule ---------- */
-function vVehicle(){
-  const v=vById(S.vid);if(!v)return `<button class="back" data-act="go" data-v="dash">← Retour</button><div class="empty">Véhicule introuvable</div>`;
-  let h=`<button class="back" data-act="go" data-v="dash">← Tableau de bord</button>
-  <div class="card"><div class="vtop"><div class="vic">🚑</div><div style="flex:1"><div class="vname" style="font-size:19px">${esc(v.name)}</div><div class="muted">${esc(v.plate||'')} ${v.model?'· '+esc(v.model):''} · ${nf(curKm(v))} km</div></div></div></div>
-  <nav class="tabs" style="margin:0 0 12px"><button class="${S.vtab==='hist'?'on':''}" style="color:${S.vtab==='hist'?'':'var(--navy)'}" data-act="vtab" data-t="hist">📅 Historique jour</button>
-  <button class="${S.vtab==='q'?'on':''}" style="color:${S.vtab==='q'?'':'var(--navy)'}" data-act="vtab" data-t="q">🧰 Contrôles 15 j</button>
-  <button class="${S.vtab==='m'?'on':''}" style="color:${S.vtab==='m'?'':'var(--navy)'}" data-act="vtab" data-t="m">🔧 Maintenance</button></nav>`;
-  if(S.vtab==='m')return h+maintTable(v.id);
-  if(S.vtab==='q'){
-    const qs=inspOf(v.id,'quinzaine');const q=quinzStatus(v.id);
-    h+=`<div class="banner ${q.cls==='ok'?'info':q.cls==='warn'?'warn':'bad'}">${esc(q.txt)}</div>`;
-    if(!qs.length)return h+`<div class="empty">Aucun contrôle de 15 jours enregistré.</div>`;
-    qs.forEach(i=>h+=inspCard(i));return h;
-  }
-  const d=S.histDate;const list=inspOf(v.id,null,d).slice().sort((a,b)=>a.createdAt-b.createdAt);
-  h+=`<div class="card inline"><button class="btn sec sm" data-act="day" data-n="-1">‹</button><input type="date" data-chg="histDate" value="${d}" style="flex:1;min-width:150px"><button class="btn sec sm" data-act="day" data-n="1">›</button><button class="btn ghost sm" data-act="day" data-n="0">Aujourd’hui</button><button class="btn sec sm" data-act="print">🖨 Imprimer / PDF</button></div>`;
-  const dep=list.filter(i=>i.type==='depart').pop(),ret=list.filter(i=>i.type==='retour').pop();
-  if(dep||ret){
-    h+=`<div class="card"><h3 style="margin-top:0">📸 Comparaison avant / après – ${esc(fmtD(d))}</h3>
-    <div class="cmp"><div></div><div class="cmph">🚦 Départ ${dep?fmtT(dep.createdAt):''}</div><div class="cmph">🏁 Retour ${ret?fmtT(ret.createdAt):''}</div></div>`;
-    for(const [k,l] of ANGLES){
-      h+=`<div class="cmp"><div class="small" style="font-weight:700">${esc(l)}</div>${dep&&dep.photos&&dep.photos[k]?imgTag(dep.photos[k],'','Départ – '+l):'<div class="none">pas de photo</div>'}${ret&&ret.photos&&ret.photos[k]?imgTag(ret.photos[k],'','Retour – '+l):'<div class="none">pas de photo</div>'}</div>`;
-    }
-    if(dep&&ret&&dep.km&&ret.km)h+=`<div class="small" style="margin-top:6px">Kilomètres parcourus : <b>${nf(ret.km-dep.km)} km</b> (${nf(dep.km)} → ${nf(ret.km)}) · Carburant : ${esc(dep.fuel||'—')} → ${esc(ret.fuel||'—')}</div>`;
-    h+=`</div>`;
-  }
-  if(!list.length)h+=`<div class="empty">Aucun contrôle ce jour-là.</div>`;
-  list.forEach(i=>h+=inspCard(i));
-  // jours récents
-  const days={};inspOf(v.id).forEach(i=>{(days[i.date]=days[i.date]||[]).push(i)});
-  const ks=Object.keys(days).sort().reverse().slice(0,30);
-  if(ks.length){h+=`<h3>Jours récents</h3><div class="card">`;ks.forEach(k=>{const arr=days[k];const pb=arr.reduce((n,i)=>n+pbCount(i),0);
-    h+=`<div class="lrow" data-act="setDay" data-d="${k}"><span class="dot ${pb?'bad':'ok'}"></span><div style="flex:1"><b>${esc(fmtD(k))}</b><div class="small muted">${arr.map(i=>TYPES[i.type]?.lbl+' ('+esc(i.employee)+')').join(' · ')}</div></div>${pb?`<span class="chip bad">${pb} ⚠</span>`:''}<span class="muted">›</span></div>`});h+=`</div>`}
-  return h;
-}
-function inspCard(i){
-  const T=TYPES[i.type]||{};const pbs=pbList(i);const tot=Object.keys(i.checks||{}).length;
-  let h=`<div class="card insp t-${i.type}"><div class="inline" style="justify-content:space-between"><b>${T.icon||''} ${esc(T.full||i.type)}</b><span class="chip ${pbs.length?'bad':'ok'}">${pbs.length?pbs.length+' problème(s)':'✓ '+tot+' points OK'}</span></div>
-  <div class="small muted" style="margin:4px 0 8px">${esc(fmtD(i.date))} à ${fmtT(i.createdAt)} · par <b>${esc(i.employee)}</b>${i.km?' · '+nf(i.km)+' km':''}${i.fuel?' · carburant '+esc(i.fuel):''}</div>`;
-  if(pbs.length)h+=`<ul class="pbl">${pbs.map(p=>`<li class="${p.s==='def'?'def':''}">${p.s==='manque'?'❌ Manquant':p.s==='def'?'⚠ Défectueux':'⚠ Problème'} : <b>${esc(p.lbl)}</b>${p.c?`<small>💬 ${esc(p.c)}</small>`:''}</li>`).join('')}</ul>`;
-  if(i.extra&&i.extra.length)h+=`<div class="small" style="font-weight:700;margin:8px 0 6px">Photos supplémentaires</div><div class="thumbs">${i.extra.map(r=>imgTag(r,'','Photo supplémentaire')).join('')}</div>`;
-  if(i.comment)h+=`<div style="margin-top:8px;background:#f5f7fb;border-radius:9px;padding:8px 10px">💬 ${esc(i.comment)}</div>`;
-  if(S.mode==='admin')h+=`<div style="text-align:right;margin-top:8px"><button class="btn ghost sm" data-act="delInsp" data-id="${i.id}">Supprimer</button></div>`;
-  return h+`</div>`;
-}
-
-/* ---------- Admin : maintenance ---------- */
-function maintTable(vid){
-  const v=vById(vid);const items=maintItems(vid);
-  let h=`<div class="card"><div class="small muted" style="margin-bottom:8px">Kilométrage actuel : <b>${nf(curKm(v))} km</b> (dernier relevé des contrôles). Touchez « Fait » après chaque intervention, et « ✎ » pour changer l’intervalle.</div><div class="tw"><table><thead><tr><th>Entretien</th><th>Dernier</th><th>Prochain</th><th></th></tr></thead><tbody>`;
-  for(const x of items){
-    const stc={ok:'ok',warn:'warn',bad:'bad',none:''}[x.st];const stt={ok:'OK',warn:'Bientôt',bad:'En retard',none:'À renseigner'}[x.st];
-    const nxt=[x.nextKm!=null?nf(x.nextKm)+' km'+(x.remKm!=null?` <span class="small muted">(${x.remKm<0?'dépassé de '+nf(-x.remKm):'dans '+nf(x.remKm)} km)</span>`:''):'',x.nextDate?esc(fmtD(x.nextDate))+(x.remD!=null?` <span class="small muted">(${x.remD<0?'retard '+(-x.remD)+' j':'dans '+x.remD+' j'})</span>`:''):''].filter(Boolean).join('<br>')||'—';
-    h+=`<tr><td><b>${esc(x.lbl)}</b><div class="small muted">tous les ${[x.intKm?nf(x.intKm)+' km':'',x.intD?x.intD+' jours':''].filter(Boolean).join(' ou ')||'—'}</div><span class="chip ${stc}" style="margin-top:4px;display:inline-block">${stt}</span></td>
-    <td class="small">${x.last.lastDate?esc(fmtD(x.last.lastDate)):'—'}${x.last.lastKm!=null?'<br>'+nf(x.last.lastKm)+' km':''}${x.last.note?`<div class="muted">${esc(x.last.note)}</div>`:''}</td><td class="small">${nxt}</td>
-    <td style="white-space:nowrap"><button class="btn green sm" data-act="maintDone" data-v="${vid}" data-k="${x.k}">Fait</button> <button class="btn ghost sm" data-act="maintInt" data-v="${vid}" data-k="${x.k}">✎</button></td></tr>`;
-  }
-  return h+`</tbody></table></div></div>`;
-}
-function vMaint(){
-  let h=`<h2>Planning de maintenance préventive</h2>`;
-  if(!S.vehicles.length)return h+`<div class="empty">Ajoutez d’abord des véhicules.</div>`;
-  const all=[];S.vehicles.forEach(v=>maintItems(v.id).forEach(x=>{if(x.st!=='ok')all.push({v,x})}));
-  const rank={bad:0,warn:1,none:2};all.sort((a,b)=>rank[a.x.st]-rank[b.x.st]);
-  h+=`<div class="card"><h3 style="margin-top:0">À prévoir</h3>`;
-  const urg=all.filter(a=>a.x.st!=='none');
-  if(!urg.length)h+=`<div class="muted">Aucun entretien en retard ou proche. 👍</div>`;
-  urg.forEach(({v,x})=>h+=`<div class="lrow" data-act="openV" data-id="${v.id}" data-tab="m"><span class="dot ${x.st}"></span><div style="flex:1"><b>${esc(v.name)}</b> · ${esc(x.lbl)}<div class="small muted">${x.st==='bad'?'En retard':'Bientôt'} · ${x.nextKm!=null?'prévu à '+nf(x.nextKm)+' km':''} ${x.nextDate?'· le '+esc(fmtD(x.nextDate)):''}</div></div><span class="muted">›</span></div>`);
-  const nn=all.filter(a=>a.x.st==='none').length;
-  if(nn)h+=`<div class="small muted" style="margin-top:8px">${nn} entretien(s) jamais renseigné(s) : ouvrez chaque véhicule pour saisir la date et le kilométrage de la dernière intervention.</div>`;
-  h+=`</div>`;
-  S.vehicles.forEach(v=>{h+=`<h3>🚑 ${esc(v.name)} <span class="muted small">${esc(v.plate||'')}</span></h3>`+maintTable(v.id)});
-  return h;
-}
-
-/* ---------- Admin : gestion ---------- */
-function vManage(){
-  let h=`<h2>Véhicules & équipe</h2><div class="card"><h3 style="margin-top:0">🚑 Ambulances (${S.vehicles.length})</h3>`;
-  S.vehicles.forEach(v=>h+=`<div class="lrow" style="cursor:default"><span class="vic" style="width:34px;height:34px;font-size:17px">🚑</span><div style="flex:1"><b>${esc(v.name)}</b><div class="small muted">${esc(v.plate||'')} ${v.model?'· '+esc(v.model):''} · ${nf(curKm(v))} km</div></div><button class="btn ghost sm" data-act="editV" data-id="${v.id}">✎</button> <button class="btn ghost sm" data-act="delV" data-id="${v.id}">🗑</button></div>`);
-  h+=`<div style="margin-top:12px"><button class="btn full" data-act="editV">➕ Ajouter une ambulance</button></div></div>
-  <div class="card"><h3 style="margin-top:0">👷 Comptes employés (${S.employees.filter(e=>!e.disabled).length})</h3>`;
-  S.employees.forEach(e=>h+=`<div class="lrow" style="cursor:default;${e.disabled?'opacity:.5':''}"><span>${e.role==='admin'?'👔':'👤'}</span><div style="flex:1"><b>${esc(e.name)}</b> ${e.role==='admin'?'<span class="chip">Admin</span>':''} ${e.disabled?'<span class="chip bad">Désactivé</span>':''}<div class="small muted">${esc(e.email||'')}</div></div>
-  ${e.id!==P.uid?`<button class="btn ghost sm" data-act="toggleE" data-id="${e.id}">${e.disabled?'Réactiver':'Désactiver'}</button>`:'<span class="small muted">vous</span>'}</div>`);
-  h+=`<h3>➕ Créer un compte</h3><label class="f">Nom et prénom</label><input type="text" id="neN">
-  <div class="row2"><div><label class="f">E-mail (identifiant)</label><input type="text" id="neE" inputmode="email" autocapitalize="off"></div><div><label class="f">Mot de passe (6 caractères min.)</label><input type="text" id="neP"></div></div>
-  <label class="f">Rôle</label><select id="neR"><option value="employee">Employé</option><option value="admin">Administrateur</option></select>
-  <button class="btn full" style="margin-top:10px" data-act="addE">Créer le compte</button>
-  <p class="small muted">Donnez ensuite à l’employé le lien de l’application, son e-mail et son mot de passe.</p></div>`;
-  return h;
-}
-
-/* ================= MODALES & TOAST ================= */
-const layer=document.getElementById('layer');
-function modal(html){layer.innerHTML=`<div class="modal" data-act="closeBg"><div class="mbox">${html}</div></div>`}
-function closeModal(){layer.innerHTML='';render()}
-function confirmBox(msg,onYes){modal(`<h3>Confirmer</h3><p>${msg}</p><div class="mact"><button class="btn ghost" data-act="closeM">Annuler</button><button class="btn red" id="yesBtn">Oui, supprimer</button></div>`);document.getElementById('yesBtn').onclick=async()=>{await onYes();closeModal()}}
-let tt;function toast(m,err){clearTimeout(tt);let t=document.querySelector('.toast');if(!t){t=document.createElement('div');document.body.appendChild(t)}t.className='toast'+(err?' err':'');t.textContent=m;tt=setTimeout(()=>t.remove(),3200)}
-function errMsg(e){const F={'permission-denied':'Action non autorisée pour votre compte','unavailable':'Pas de connexion internet','auth/email-already-in-use':'Cet e-mail est déjà utilisé','auth/invalid-email':'E-mail invalide','auth/weak-password':'Mot de passe trop court (6 caractères min.)','auth/invalid-credential':'E-mail ou mot de passe incorrect','auth/wrong-password':'E-mail ou mot de passe incorrect','auth/user-not-found':'E-mail ou mot de passe incorrect','auth/too-many-requests':'Trop d’essais, réessayez plus tard','auth/network-request-failed':'Pas de connexion internet','storage/unauthorized':'Envoi de photo refusé','storage/retry-limit-exceeded':'Connexion trop lente pour envoyer la photo'};if(e&&F[e.code])return F[e.code];const c=e&&e.code;if(c==='invalid_argument'&&!P.canWrite)return'Accès en lecture seule';if(c==='quota_exceeded')return'Espace de stockage plein : supprimez d’anciens contrôles';if(c==='invalid_argument')return'Action refusée (droits insuffisants ?)';return'Erreur : '+(c||e&&e.message||'inconnue')}
-async function safe(fn,okMsg){try{await fn();okMsg&&toast(okMsg)}catch(e){console.warn(e);toast(errMsg(e),true)}}
-
-/* ================= ACTIONS ================= */
-const ACT={
-  switchMode(){S.mode=S.mode==='admin'?'employee':'admin';lsSet('amb_mode',S.mode);S.view=S.mode==='admin'?'dash':'home';render()},
-  go(t){S.view=t.dataset.v;render();window.scrollTo(0,0)},
-  openV(t){S.vid=t.dataset.id;S.view='vehicle';S.vtab=t.dataset.tab||'hist';if(t.dataset.d)S.histDate=t.dataset.d;render();window.scrollTo(0,0)},
-  vtab(t){S.vtab=t.dataset.t;render()},
-  day(t){const n=+t.dataset.n;S.histDate=n===0?dkey():addDays(S.histDate,n);render()},
-  setDay(t){S.histDate=t.dataset.d;render();window.scrollTo(0,0)},
-  start(t){startForm(t.dataset.t,t.dataset.id)},
-  cancelForm(){confirmCancel()},
-  toggleSec(t,e){if(e.target.closest('[data-act="allOk"]'))return;const s=t.dataset.s;const el=document.getElementById('sec-'+s);el.classList.toggle('closed');S.form.open[s]=!el.classList.contains('closed')},
-  allOk(t){const s=TYPES[S.form.type].sections.find(x=>x.id===t.dataset.s);s.items.forEach(([k])=>{const key=s.id+'.'+k;const c=S.form.checks[key];if(!c||!c.s){S.form.checks[key]={s:'ok'};paintItem(key)}});progress();
-    const all=TYPES[S.form.type].sections;const i=all.indexOf(s);const nx=all[i+1];if(nx){document.getElementById('sec-'+s.id).classList.add('closed');const ne=document.getElementById('sec-'+nx.id);ne.classList.remove('closed');S.form.open[nx.id]=true;ne.scrollIntoView({behavior:'smooth',block:'start'})}},
-  setS(t){const k=t.dataset.k,v=t.dataset.v;const c=S.form.checks[k]||{};c.s=v;S.form.checks[k]=c;paintItem(k);progress();if(v!=='ok'){const i=document.querySelector(`[data-com="${k}"]`);i&&i.focus()}},
-  rmExtra(t){S.form.extra.splice(+t.dataset.i,1);paintExtra()},
-  submit(){submitForm()},
-  lightbox(t){if(!t.src)return;layer.innerHTML=`<div class="lb" data-act="closeLb"><img src="${esc(t.src)}"><div class="cap">${esc(t.dataset.cap||'')} · toucher pour fermer</div></div>`},
-  closeLb(){layer.innerHTML=''},
-  closeBg(t,e){if(e.target===t)layer.innerHTML=''},
-  closeM(){layer.innerHTML=''},
-  editV(t){const v=t.dataset.id?vById(t.dataset.id):{};
-    modal(`<h3>${v.id?'Modifier':'Nouvelle'} ambulance</h3><label class="f">Nom / numéro *</label><input type="text" id="mvN" value="${esc(v.name||'')}" placeholder="Ambulance 04">
-    <label class="f">Immatriculation</label><input type="text" id="mvP" value="${esc(v.plate||'')}" placeholder="AB-123-CD"><label class="f">Modèle</label><input type="text" id="mvM" value="${esc(v.model||'')}" placeholder="Renault Master">
-    <label class="f">Kilométrage actuel</label><input type="number" id="mvK" value="${esc(v.km||'')}" inputmode="numeric">
-    <div class="mact"><button class="btn ghost" data-act="closeM">Annuler</button><button class="btn" id="mvSave">Enregistrer</button></div>`);
-    document.getElementById('mvSave').onclick=()=>{const name=document.getElementById('mvN').value.trim();if(!name)return toast('Nom obligatoire',true);
-      const d={name,plate:document.getElementById('mvP').value.trim(),model:document.getElementById('mvM').value.trim(),km:Number(document.getElementById('mvK').value)||0,createdAt:v.createdAt||Date.now()};
-      safe(async()=>{await (v.id?P.db.doc('vehicles/'+v.id):P.db.collection('vehicles').doc()).set(d);closeModal()},'Ambulance enregistrée')}},
-  delV(t){const v=vById(t.dataset.id);confirmBox(`Supprimer <b>${esc(v.name)}</b> ? L’historique des contrôles reste conservé.`,()=>safe(()=>P.db.doc('vehicles/'+v.id).delete(),'Supprimée'))},
-  addE(t){const n=document.getElementById('neN').value.trim(),em=document.getElementById('neE').value.trim().toLowerCase(),pw=document.getElementById('neP').value,role=document.getElementById('neR').value;
-    if(!n||!em||!pw)return toast('Nom, e-mail et mot de passe obligatoires',true);
-    t.disabled=true;safe(async()=>{
-      const sec=firebase.apps.find(a=>a.name==='creation')||firebase.initializeApp(FIREBASE_CONFIG,'creation');
-      const cred=await sec.auth().createUserWithEmailAndPassword(em,pw);
-      await P.db.doc('users/'+cred.user.uid).set({name:n,email:em,role,createdAt:Date.now()});
-      await sec.auth().signOut();
-    },'Compte créé pour '+n).finally(()=>{t.disabled=false})},
-  toggleE(t){const e=S.employees.find(x=>x.id===t.dataset.id);safe(()=>P.db.doc('users/'+e.id).update({disabled:!e.disabled}),e.disabled?'Compte réactivé':'Compte désactivé')},
-  logout(){P.auth&&P.auth.signOut()},
-  setup(){modal(`<h3>Compte administrateur</h3><p class="small muted">Ce compte sera le directeur : il voit tout et crée les comptes des employés.</p>
-    <label class="f">Nom et prénom</label><input type="text" id="suN"><label class="f">E-mail</label><input type="text" id="suE" inputmode="email" autocapitalize="off">
-    <label class="f">Mot de passe (6 caractères min.)</label><input type="password" id="suP" style="width:100%;border:1px solid #cfd6e2;border-radius:10px;padding:10px 11px">
-    <div class="mact"><button class="btn ghost" data-act="closeM">Annuler</button><button class="btn" id="suGo">Créer</button></div>`);
-    document.getElementById('suGo').onclick=async()=>{const n=document.getElementById('suN').value.trim(),em=document.getElementById('suE').value.trim().toLowerCase(),pw=document.getElementById('suP').value;
-      if(!n||!em||!pw)return toast('Tous les champs sont obligatoires',true);
-      const btn=document.getElementById('suGo');btn.disabled=true;S.settingUp=true;
-      try{const cred=await P.auth.createUserWithEmailAndPassword(em,pw);
-        try{const bt=P.db.batch();bt.set(P.db.doc('users/'+cred.user.uid),{name:n,email:em,role:'admin',createdAt:Date.now()});bt.set(P.db.doc('config/setup'),{by:cred.user.uid,at:Date.now()});await bt.commit();}
-        catch(e){S.settingUp=false;try{await cred.user.delete()}catch(x){}toast('Un administrateur existe déjà',true);btn.disabled=false;return}
-        S.settingUp=false;layer.innerHTML='';toast('Compte administrateur créé ✓');
-      }catch(e){S.settingUp=false;btn.disabled=false;toast(errMsg(e),true)}};},
-  forgot(){const em=(document.getElementById('lgE')||{}).value;if(!em)return toast('Écrivez d’abord votre e-mail',true);safe(()=>P.auth.sendPasswordResetEmail(em.trim()),'E-mail de réinitialisation envoyé')},
-  print(){window.print()},
-  delInsp(t){confirmBox('Supprimer ce contrôle et ses informations ?',()=>safe(()=>P.db.doc('inspections/'+t.dataset.id).delete(),'Contrôle supprimé'))},
-  maintDone(t){const vid=t.dataset.v,k=t.dataset.k;const v=vById(vid);const lbl=MAINT.find(m=>m[0]===k)[1];
-    modal(`<h3>🔧 ${esc(lbl)}</h3><p class="small muted">${esc(v.name)}</p><div class="row2"><div><label class="f">Date de l’intervention</label><input type="date" id="mdD" value="${dkey()}"></div><div><label class="f">Kilométrage</label><input type="number" id="mdK" value="${curKm(v)}" inputmode="numeric"></div></div>
-    <label class="f">Note (garage, pièces, coût…)</label><input type="text" id="mdN"><div class="mact"><button class="btn ghost" data-act="closeM">Annuler</button><button class="btn green" id="mdSave">Enregistrer</button></div>`);
-    document.getElementById('mdSave').onclick=()=>{const it={...((S.maint[vid]&&S.maint[vid].items&&S.maint[vid].items[k])||{}),lastDate:document.getElementById('mdD').value,lastKm:Number(document.getElementById('mdK').value)||0,note:document.getElementById('mdN').value.trim()};saveMaint(vid,k,it)}},
-  maintInt(t){const vid=t.dataset.v,k=t.dataset.k;const x=maintItems(vid).find(i=>i.k===k);
-    modal(`<h3>Intervalle – ${esc(x.lbl)}</h3><div class="row2"><div><label class="f">Tous les (km)</label><input type="number" id="miK" value="${x.intKm||''}" placeholder="aucun"></div><div><label class="f">Tous les (jours)</label><input type="number" id="miD" value="${x.intD||''}" placeholder="aucun"></div></div>
-    <div class="mact"><button class="btn ghost" data-act="closeM">Annuler</button><button class="btn" id="miSave">Enregistrer</button></div>`);
-    document.getElementById('miSave').onclick=()=>{const it={...((S.maint[vid]&&S.maint[vid].items&&S.maint[vid].items[k])||{}),intKm:Number(document.getElementById('miK').value)||null,intDays:Number(document.getElementById('miD').value)||null};saveMaint(vid,k,it)}}
+const openIssues = () => S.issues.filter(i=>i.status!=='resolved');
+/* =====================================================================
+   Rendu général
+   ===================================================================== */
+const NAV = {
+  employee:[['home','Véhicules','ambulance'],['plan','Planning','calendar-days'],['disinf','Désinfection','spray-can']],
+  admin:[['dash','Tableau de bord','layout-dashboard'],['plan','Planning','calendar-days'],['maint','Maintenance','wrench'],['fleet','Véhicules et équipe','users']]
 };
-function saveMaint(vid,k,it){const cur=S.maint[vid]||{};const items={...(cur.items||{}),[k]:it};safe(async()=>{await P.db.doc('maintenance/'+vid).set({items,updatedAt:Date.now()});closeModal()},'Enregistré')}
-function confirmCancel(){modal(`<h3>Annuler le contrôle ?</h3><p>Les informations saisies seront perdues.</p><div class="mact"><button class="btn ghost" data-act="closeM">Continuer la saisie</button><button class="btn red" id="cxYes">Annuler le contrôle</button></div>`);
-  document.getElementById('cxYes').onclick=()=>{layer.innerHTML='';S.form=null;S.view=S.mode==='admin'?'dash':'home';render()}}
-
-async function submitForm(){
-  const f=S.form;const p=progress();
-  if(!p.ok){toast('Incomplet : '+p.parts.join(', '),true);
-    const first=TYPES[f.type].sections.find(s=>s.items.some(([k])=>{const c=f.checks[s.id+'.'+k];return!c||!c.s||(c.s!=='ok'&&!(c.c||'').trim())}));
-    if(first){const el=document.getElementById('sec-'+first.id);el.classList.remove('closed');el.scrollIntoView({behavior:'smooth',block:'start'})}return}
-  const v=vById(f.vid);
-  if(TYPES[f.type].km){const km=Number(f.km);
-    const dep=inspOf(v.id,'depart',dkey())[0];if(f.type==='retour'&&dep&&dep.km&&km<dep.km)return toast('Le kilométrage du retour est inférieur à celui du départ',true)}
-  const btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent='Enregistrement…';
-  const doc={vehicleId:f.vid,vehicleName:v.name,type:f.type,date:dkey(),createdAt:Date.now(),employee:S.me,uid:P.uid,checks:f.checks,comment:f.comment.trim()};
-  if(TYPES[f.type].photos){doc.photos=f.photos;doc.extra=f.extra}
-  if(TYPES[f.type].km){doc.km=Number(f.km);doc.fuel=f.fuel}
-  try{await P.db.collection('inspections').doc().set(doc);
-    const pb=pbCount(doc);S.form=null;S.view=S.mode==='admin'?'dash':'home';render();window.scrollTo(0,0);
-    toast(pb?'Contrôle enregistré – '+pb+' problème(s) signalé(s) à l’admin':'Contrôle enregistré ✓');
-  }catch(e){console.warn(e);btn.disabled=false;btn.textContent='Valider le contrôle';toast(errMsg(e),true)}
+const MARK = '<svg viewBox="0 0 24 24" fill="#fff"><path d="M9.5 3h5v6.5H21v5h-6.5V21h-5v-6.5H3v-5h6.5z"/></svg>';
+function render(){
+  if(S.route==='auth'){app.innerHTML=vAuth();icons();paintAdminSlots();return}
+  if(S.route==='loading'){app.innerHTML=`<div class="auth"><div class="art"><div class="brand"><span class="mark">${MARK}</span>AmbuCheck</div><p>Chargement…</p></div></div>`;return}
+  if(S.route==='noaccount'||S.route==='disabled'){app.innerHTML=vNoAccess();icons();return}
+  if(S.route==='wizard'){app.innerHTML=vWizard();icons();afterWizard();return}
+  const nav=NAV[S.role]||NAV.employee;const nIss=openIssues().length;
+  const navBtn=(r,l,ic,cls)=>`<button class="${S.route===r||(r==='dash'&&S.route==='vehicle')||(r==='home'&&S.route==='vehicle')?'on':''}" data-act="nav" data-r="${r}">${I(ic)}<span>${l}</span>${S.role==='admin'&&r==='dash'&&nIss?`<span class="dotn">${nIss}</span>`:''}</button>`;
+  const views={home:vEmpHome,plan:S.role==='admin'?vAdminPlan:vEmpPlan,disinf:vEmpDisinf,dash:vDash,maint:vMaint,fleet:vFleet,vehicle:vVehicle};
+  const body=(views[S.route]||(S.role==='admin'?vDash:vEmpHome))();
+  app.innerHTML=`
+  <header class="top"><div class="tin">
+    <div class="brand"><span class="mark">${MARK}</span>AmbuCheck</div><div class="grow"></div>
+    <div class="who"><b>${esc(S.user.name)}</b><br>${S.role==='admin'?'Administrateur':esc(S.user.function||'Employé')}</div>
+    <button class="iconbtn" data-act="logout" title="Se déconnecter" aria-label="Se déconnecter">${I('log-out')}</button>
+  </div></header>
+  <div class="layout"><aside class="side"><nav>${nav.map(n=>navBtn(...n)).join('')}</nav></aside>
+  <main>${S.err?`<div class="banner stop">${esc(S.err)}</div>`:''}${!navigator.onLine?`<div class="banner warn">Pas de connexion internet. Les contrôles seront envoyés au retour du réseau, mais les photos ont besoin d’internet.</div>`:''}${body}</main></div>
+  <nav class="bnav">${nav.map(n=>navBtn(...n)).join('')}</nav>`;
+  icons(); hydrate();
 }
 
-/* ================= ÉVÉNEMENTS ================= */
-document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t)return;const a=ACT[t.dataset.act];if(a){a(t,e)}});
+/* ---------------- Connexion / inscription ---------------- */
+function vAuth(){
+  const t=S.authTab;
+  return `<div class="auth">
+  <div class="art">
+    <div class="brand"><span class="mark">${MARK}</span>AmbuCheck</div>
+    <h1>Chaque départ contrôlé, chaque retour vérifié.</h1>
+    <p>Photos du véhicule, matériel sanitaire, désinfection et maintenance : tout le suivi de vos ambulances au même endroit.</p>
+    <div class="band"></div>
+  </div>
+  <div class="panel"><div class="box">
+    <div class="seg" role="tablist"><button class="${t==='login'?'on':''}" data-act="authTab" data-t="login">Se connecter</button><button class="${t==='signup'?'on':''}" data-act="authTab" data-t="signup">Créer un compte</button></div>
+    ${t==='login'?`
+    <form id="fLogin" autocomplete="on">
+      <label class="f" for="lgE">Adresse e-mail</label><input class="in" id="lgE" type="email" autocomplete="username" autocapitalize="off" required>
+      <label class="f" for="lgP">Mot de passe</label><input class="in" id="lgP" type="password" autocomplete="current-password" required>
+      <button class="btn full" style="margin-top:18px" type="submit">${I('log-in')}Se connecter</button>
+    </form>
+    <p style="text-align:center;margin-top:14px"><button class="link" data-act="forgot">Mot de passe oublié</button></p>
+    <p class="small muted" style="text-align:center;margin-top:8px">Votre espace s’ouvre automatiquement selon votre rôle : employé ou administrateur.</p>`
+    :`
+    <form id="fSignup">
+      <label class="f" for="suN">Nom et prénom</label><input class="in" id="suN" autocomplete="name" required>
+      <label class="f" for="suE">Adresse e-mail</label><input class="in" id="suE" type="email" autocomplete="email" autocapitalize="off" required>
+      <label class="f" for="suP">Mot de passe (6 caractères minimum)</label><input class="in" id="suP" type="password" autocomplete="new-password" minlength="6" required>
+      <label class="f">Je suis</label>
+      <div class="seg" id="roleSeg"><button type="button" class="on" data-act="pickRole" data-v="employee">Employé</button><button type="button" data-act="pickRole" data-v="admin" id="roleAdminBtn">Administrateur</button></div>
+      <p class="tiny muted" id="adminSlots" style="margin-top:6px"></p>
+      <button class="btn full" style="margin-top:18px" type="submit">${I('user-plus')}Créer mon compte</button>
+    </form>
+    <p class="small muted" style="margin-top:12px">Si votre administrateur a déjà enregistré votre e-mail, votre nom, votre fonction et votre rôle sont repris automatiquement.</p>`}
+  </div></div></div>`;
+}
+let pickedRole='employee';
+function paintAdminSlots(){
+  const el=$('#adminSlots'),b=$('#roleAdminBtn');if(!el)return;
+  const n=S.admins.length;el.textContent=n>=2?'Les 2 places administrateur sont déjà prises.':`Places administrateur restantes : ${2-n} sur 2.`;
+  if(b){b.disabled=n>=2;if(n>=2&&pickedRole==='admin'){pickedRole='employee';document.querySelectorAll('#roleSeg button').forEach(x=>x.classList.toggle('on',x.dataset.v==='employee'))}}
+}
+async function doSignup(){
+  const name=$('#suN').value.trim(),em=$('#suE').value.trim().toLowerCase(),pw=$('#suP').value;
+  if(!name||!em||pw.length<6)return toast('Remplissez le nom, l’e-mail et un mot de passe de 6 caractères minimum.',true);
+  const btn=document.querySelector('#fSignup button[type=submit]');btn.disabled=true;S.settingUp=true;
+  try{
+    const cred=await P.auth.createUserWithEmailAndPassword(em,pw);const uid=cred.user.uid;
+    let staff=null;try{const s=await P.db.doc('staff/'+em).get();if(s.exists)staff=s.data()}catch(e){}
+    let role=staff?staff.role:pickedRole;const doc={name:(staff&&staff.name)||name,email:em,function:(staff&&staff.function)||'',role,createdAt:Date.now(),declared:!!staff};
+    let note=staff?'Votre e-mail était enregistré : rôle '+(role==='admin'?'administrateur':'employé')+' appliqué.':'';
+    if(role==='admin'){
+      try{const a=await P.db.doc('config/admins').get();const uids=(a.exists&&a.data().uids)||[];
+        if(uids.length>=2)throw new Error('full');
+        const bt=P.db.batch();bt.set(P.db.doc('users/'+uid),doc);bt.set(P.db.doc('config/admins'),{uids:uids.concat([uid])});await bt.commit();
+      }catch(e){role='employee';doc.role='employee';await P.db.doc('users/'+uid).set(doc);note='Les 2 places administrateur sont prises : votre compte est créé comme employé.'}
+    }else await P.db.doc('users/'+uid).set(doc);
+    S.settingUp=false;toast(note||'Compte créé. Bienvenue !');
+  }catch(e){S.settingUp=false;btn.disabled=false;toast(errMsg(e),true)}
+}
+function vNoAccess(){
+  const dis=S.route==='disabled';
+  return `<div class="auth"><div class="art"><div class="brand"><span class="mark">${MARK}</span>AmbuCheck</div>
+  <h1>${dis?'Compte désactivé':'Compte incomplet'}</h1><p>${dis?'Votre accès a été désactivé. Contactez votre administrateur.':'Ce compte n’a pas de profil. Créez votre compte à nouveau ou contactez votre administrateur.'}</p>
+  <div><button class="btn sec" data-act="logout">${I('log-out')}Se déconnecter</button></div></div></div>`;
+}
+
+/* =====================================================================
+   ESPACE EMPLOYÉ
+   ===================================================================== */
+function vEmpHome(){
+  const today=dkey();const mine=S.vehicles.find(v=>inUse(v)&&vState(v).by===P.uid);
+  const assign=(S.planning[today]&&S.planning[today].assign)||{};
+  const h=new Date().getHours();const hello=h<5||h>=18?'Bonsoir':'Bonjour';
+  let out=`<div class="hello"><h1>${hello} ${esc(first(S.user.name))}</h1><p class="small" style="margin-top:4px">${esc(fD(today))}</p></div>`;
+  if(mine){const st=vState(mine);
+    out+=`<div class="mission" style="margin-top:16px"><div class="row">${plate(mine.plate)}<span class="grow"></span><span class="tag warn">En service</span></div>
+    <div><div class="t">${esc(mine.name)}</div><div class="s">Départ ${st.since?'à '+fT(st.since):''}, ${esc((LEVELS[st.level]||LEVELS.daily).t.toLowerCase())}</div></div>
+    <button class="btn go full" data-act="startRet" data-id="${mine.id}">${I('flag')}Faire le contrôle de retour</button></div>`}
+  // rappels
+  const rem=[];
+  S.vehicles.forEach(v=>{if(assign[v.id]===P.uid&&!inUse(v))rem.push(['info','user-check',`${v.name} vous est attribuée aujourd’hui.`]);
+    const d=dueInfo(v.id);if(assign[v.id]===P.uid||mine&&mine.id===v.id){if(d.dueM)rem.push([d.lateM?'stop':'',  'calendar-check',`${v.name} : le contrôle mensuel est à faire${d.lateM?' (en retard)':''}.`]);else if(d.due15)rem.push([d.late15?'stop':'','calendar-range',`${v.name} : le contrôle 15 jours est à faire${d.late15?' (en retard)':''}.`])}});
+  if(rem.length)out+=`<div class="stack" style="margin-top:16px">${rem.map(r=>`<div class="reminder ${r[0]}">${I(r[1])}<div>${esc(r[2])}</div></div>`).join('')}</div>`;
+  out+=`<div class="sect"><h2>Ambulances</h2>`;
+  if(!S.loaded['véhicules'])return out+`<div class="empty">Chargement…</div></div>`;
+  if(!S.vehicles.length)return out+`<div class="card empty">${I('ambulance')}<p>Aucune ambulance pour l’instant. L’administrateur doit les ajouter.</p></div></div>`;
+  const order=v=>assign[v.id]===P.uid?0:inUse(v)?2:v.status==='maintenance'?3:1;
+  out+=`<div class="grid">`+S.vehicles.slice().sort((a,b)=>order(a)-order(b)).map(v=>vehCardEmp(v,assign)).join('')+`</div></div>`;
+  return out;
+}
+function vehCardEmp(v,assign){
+  const st=vState(v);const busy=inUse(v);const off=v.status==='maintenance';const me=busy&&st.by===P.uid;const d=dueInfo(v.id);
+  const todays=departs(v.id).filter(i=>i.date===dkey());
+  let status=off?'<span class="status off">Hors service</span>':busy?`<span class="status busy">${me?'En service avec vous':'En service avec '+esc(first(st.byName))}</span>`:'<span class="status go">Disponible</span>';
+  let tags=[];if(assign[v.id]===P.uid)tags.push('<span class="tag blue">Attribuée à vous</span>');else if(assign[v.id])tags.push(`<span class="tag">Prévue pour ${esc(first(uName(assign[v.id])))}</span>`);
+  if(d.dueM)tags.push(`<span class="tag ${d.lateM?'stop':'warn'}">Mensuel à faire</span>`);else if(d.due15)tags.push(`<span class="tag ${d.late15?'stop':'warn'}">15 jours à faire</span>`);
+  if(todays.length)tags.push(`<span class="tag go">${todays.length} départ${todays.length>1?'s':''} aujourd’hui</span>`);
+  let action='';
+  if(off)action=`<button class="btn ghost full" disabled>${I('ban')}Véhicule hors service</button>`;
+  else if(me)action=`<button class="btn go full" data-act="startRet" data-id="${v.id}">${I('flag')}Faire le retour</button>`;
+  else if(busy)action=`<button class="btn ghost full" disabled>${I('lock')}Bloquée : en service avec ${esc(first(st.byName))}${st.since?' depuis '+fT(st.since):''}</button>`;
+  else action=`<button class="btn full" data-act="chooseDep" data-id="${v.id}">${I('play')}Départ</button>`;
+  return `<article class="veh ${busy?'busy':''} ${off?'off':''}"><div class="band"></div><div class="body">
+    <div class="row">${plate(v.plate)}<span class="grow"></span>${status}</div>
+    <div><div class="name">${esc(v.name)}</div><div class="small muted">${esc(v.model||'')}${v.model?', ':''}${nf(curKm(v))} km</div></div>
+    ${tags.length?`<div class="tags">${tags.join('')}</div>`:''}
+    ${action}</div></article>`;
+}
+function sheetChooseDep(vid){
+  const v=vById(vid);const d=dueInfo(vid);
+  const opt=(lvl,extra)=>`<button class="choice" data-act="startDep" data-id="${vid}" data-l="${lvl}"><span class="badge ${extra?'warn':'blue'}">${I(LEVELS[lvl].icon)}</span><span class="grow"><span class="t">${LEVELS[lvl].t}</span><br><span class="small muted">${LEVELS[lvl].s}</span>${extra?`<br><span class="tag warn" style="margin-top:6px;display:inline-block">${extra}</span>`:''}</span>${I('chevron-right')}</button>`;
+  modal(`<div class="sh">${plate(v.plate)}<h2>${esc(v.name)}</h2><button class="iconbtn" style="background:var(--grey-2);color:var(--ink)" data-act="closeM" aria-label="Fermer">${I('x')}</button></div>
+  <p class="muted">Choisissez le contrôle à faire avant de partir.</p>
+  ${opt('daily','')}${opt('15j',d.due15&&!d.dueM?(d.late15?'En retard, à faire aujourd’hui':'À faire aujourd’hui'):'')}${opt('monthly',d.dueM?(d.lateM?'En retard, à faire aujourd’hui':'À faire aujourd’hui'):'')}`);
+}
+
+/* ---------------- Planning employé ---------------- */
+function calendar(month,cellDots,sel){
+  const [y,m]=month.split('-').map(Number);const firstD=new Date(y,m-1,1);const days=new Date(y,m,0).getDate();const off=(firstD.getDay()+6)%7;const today=dkey();
+  let g=['L','M','M','J','V','S','D'].map(d=>`<div class="dn">${d}</div>`).join('');
+  for(let i=0;i<off;i++)g+='<div class="day out"></div>';
+  for(let d=1;d<=days;d++){const k=y+'-'+pad(m)+'-'+pad(d);const dots=cellDots(k)||[];
+    g+=`<button class="day ${k===today?'today':''} ${k===sel?'sel':''}" data-act="calDay" data-d="${k}" aria-label="${esc(fD(k))}">${d}<span class="dots">${dots.slice(0,4).map(c=>`<i class="d-${c}"></i>`).join('')}</span></button>`}
+  const label=firstD.toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+  return `<div class="cal"><div class="calh"><button class="btn sec sm" data-act="calNav" data-n="-1" aria-label="Mois précédent">${I('chevron-left')}</button><h3>${label}</h3><button class="btn sm ghost" data-act="calToday">Aujourd’hui</button><button class="btn sec sm" data-act="calNav" data-n="1" aria-label="Mois suivant">${I('chevron-right')}</button></div><div class="calg">${g}</div>`;
+}
+function vEmpPlan(){
+  const today=dkey();
+  const dots=k=>{const r=[];const a=(S.planning[k]&&S.planning[k].assign)||{};if(Object.values(a).includes(P.uid))r.push('blue');
+    if(S.insp.some(i=>i.kind==='depart'&&i.date===k&&i.uid===P.uid))r.push('go');
+    if(S.vehicles.some(v=>{const d=dueInfo(v.id);return(d.n15===k||d.nm===k)&&k>=today}))r.push('warn');return r};
+  let out=`<h1>Planning</h1><p class="muted" style="margin:4px 0 16px">Vos affectations, vos contrôles et les prochains rappels.</p>`;
+  out+=calendar(S.calMonth,dots,S.calDay)+`<div class="legend"><span><i class="d-blue"></i>Vous êtes affecté</span><span><i class="d-go"></i>Vos départs</span><span><i class="d-warn"></i>Contrôle 15 jours ou mensuel prévu</span></div></div>`;
+  const k=S.calDay;const a=(S.planning[k]&&S.planning[k].assign)||{};
+  out+=`<div class="sect"><h2 style="text-transform:capitalize">${esc(fD(k))}</h2><div class="card list">`;
+  let rows='';
+  Object.entries(a).forEach(([vid,uid])=>{const v=vById(vid);if(v&&uid===P.uid)rows+=`<div class="li"><span class="badge blue">${I('user-check')}</span><div class="grow"><div class="ttl">${esc(v.name)} vous est attribuée</div></div></div>`});
+  S.insp.filter(i=>i.date===k&&i.uid===P.uid).slice().reverse().forEach(i=>rows+=`<div class="li"><span class="badge ${i.kind==='depart'?'blue':'go'}">${I(i.kind==='depart'?'play':'flag')}</span><div class="grow"><div class="ttl">${i.kind==='depart'?'Départ':'Retour'} ${esc(i.vehicleName)}</div><div class="small muted">${fT(i.createdAt)}${i.level?', '+LEVELS[i.level].t.toLowerCase():''}</div></div></div>`);
+  S.vehicles.forEach(v=>{const d=dueInfo(v.id);if(d.n15===k)rows+=`<div class="li"><span class="badge warn">${I('calendar-range')}</span><div class="grow"><div class="ttl">${esc(v.name)} : contrôle 15 jours prévu</div></div></div>`;if(d.nm===k)rows+=`<div class="li"><span class="badge warn">${I('calendar-check')}</span><div class="grow"><div class="ttl">${esc(v.name)} : contrôle mensuel prévu</div></div></div>`});
+  out+=(rows||`<div class="empty">Rien de prévu ce jour-là.</div>`)+`</div></div>`;
+  out+=`<div class="sect"><h2>Prochains contrôles</h2><div class="card list">`+S.vehicles.map(v=>{const d=dueInfo(v.id);
+    const t=(n,late,days,never)=>never?'jamais fait, à faire dès le prochain départ':late?`en retard depuis le ${fDs(n)}`:days===0?'aujourd’hui':`le ${fDs(n)}, dans ${days} jour${days>1?'s':''}`;
+    return `<div class="li"><span class="badge ${d.late15||d.lateM?'stop':d.due15||d.dueM?'warn':'go'}">${I('ambulance')}</span><div class="grow"><div class="ttl">${esc(v.name)}</div><div class="small muted">15 jours : ${t(d.n15,d.late15,d.d15,!d.l15)}<br>Mensuel : ${t(d.nm,d.lateM,d.dM,!d.lm)}</div></div></div>`}).join('')+`</div></div>`;
+  return out;
+}
+
+/* ---------------- Cahier de désinfection ---------------- */
+function disinfForm(prefix,vals={}){
+  return `<label class="f">Produit utilisé</label><select class="in" id="${prefix}Prod">${['',...PRODUCTS].map(p=>`<option ${(vals.productSel||vals.product)===p?'selected':''} value="${esc(p)}">${p||'Choisir un produit'}</option>`).join('')}</select>
+  <input class="in ${vals.productSel==='Autre produit'?'':'hide'}" id="${prefix}ProdO" placeholder="Nom du produit" style="margin-top:8px" value="${esc(vals.productOther||'')}">
+  <label class="f">Type de désinfection</label><select class="in" id="${prefix}Type">${['',...DISINF_TYPES].map(p=>`<option ${vals.type===p?'selected':''} value="${esc(p)}">${p||'Choisir le type'}</option>`).join('')}</select>
+  <label class="f">Zones traitées</label><div class="chips" id="${prefix}Zones">${ZONES.map(z=>`<button type="button" class="${(vals.zones||[]).includes(z)?'on':''}" data-act="zone" data-z="${esc(z)}">${esc(z)}</button>`).join('')}</div>
+  <label class="f">Observation</label><textarea class="in" id="${prefix}Obs" placeholder="Remarque éventuelle">${esc(vals.obs||'')}</textarea>
+  <p class="small muted" style="margin-top:10px">${I('user-round')} Intervenant : <b>${esc(S.user.name)}</b>, le ${esc(fD(dkey()))} à ${fT(Date.now())}</p>`;
+}
+function readDisinf(prefix){
+  const prod=$('#'+prefix+'Prod').value;const zones=[...document.querySelectorAll('#'+prefix+'Zones button.on')].map(b=>b.dataset.z);
+  return {product:prod==='Autre produit'?($('#'+prefix+'ProdO').value.trim()||'Autre produit'):prod,productSel:prod,productOther:$('#'+prefix+'ProdO').value.trim(),type:$('#'+prefix+'Type').value,zones,obs:$('#'+prefix+'Obs').value.trim()};
+}
+function vEmpDisinf(){return vDisinfRegistry(false)}
+function vDisinfRegistry(isAdmin){
+  const f=S.params.df||{from:addDays(dkey(),-30),to:dkey(),vid:''};S.params.df=f;
+  const rows=S.disinf.filter(d=>d.date>=f.from&&d.date<=f.to&&(!f.vid||d.vehicleId===f.vid));
+  let out=isAdmin?'':`<div class="row wrap"><div class="grow"><h1>Désinfection</h1><p class="muted" style="margin-top:4px">Cahier de désinfection et d’hygiène des véhicules.</p></div><button class="btn" data-act="newDisinf">${I('plus')}Nouvelle désinfection</button></div>`;
+  out+=`<div class="card" style="margin-top:16px"><div class="two"><div><label class="f" style="margin-top:0">Du</label><input class="in" type="date" data-f="from" value="${f.from}"></div><div><label class="f" style="margin-top:0">Au</label><input class="in" type="date" data-f="to" value="${f.to}"></div></div>
+  <label class="f">Véhicule</label><select class="in" data-f="vid"><option value="">Tous les véhicules</option>${S.vehicles.map(v=>`<option value="${v.id}" ${f.vid===v.id?'selected':''}>${esc(v.name)}</option>`).join('')}</select></div>`;
+  out+=`<div class="card" style="margin-top:14px"><p class="small muted">${rows.length} enregistrement${rows.length>1?'s':''}</p><div class="tw"><table><thead><tr><th>Date</th><th>Véhicule</th><th>Produit et type</th><th>Zones</th><th>Intervenant</th></tr></thead><tbody>`+
+  (rows.map(d=>`<tr><td><b>${fDs(d.date)}</b><br><span class="small muted">${fT(d.createdAt)}</span></td><td>${esc(d.vehicleName)}</td><td>${esc(d.product)}<br><span class="small muted">${esc(d.type)}</span></td><td class="small">${esc((d.zones||[]).join(', '))}${d.obs?`<br><span class="muted">${esc(d.obs)}</span>`:''}</td><td>${esc(d.intervenant)}<br><span class="tag go">${I('check')} Validé</span></td></tr>`).join('')||`<tr><td colspan="5"><div class="empty">Aucune désinfection sur cette période.</div></td></tr>`)+`</tbody></table></div></div>`;
+  return out;
+}
+function sheetNewDisinf(){
+  modal(`<div class="sh"><h2>Nouvelle désinfection</h2><button class="iconbtn" style="background:var(--grey-2);color:var(--ink)" data-act="closeM" aria-label="Fermer">${I('x')}</button></div>
+  <label class="f" style="margin-top:0">Véhicule</label><select class="in" id="ndV"><option value="">Choisir le véhicule</option>${S.vehicles.map(v=>`<option value="${v.id}">${esc(v.name)}</option>`).join('')}</select>
+  ${disinfForm('nd')}<button class="btn full" style="margin-top:16px" id="ndSave">${I('check')}Enregistrer la désinfection</button>`);
+  $('#ndSave').onclick=()=>{const vid=$('#ndV').value;const d=readDisinf('nd');if(!vid||!d.product||!d.type||!d.zones.length)return toast('Choisissez le véhicule, le produit, le type et au moins une zone.',true);
+    const v=vById(vid);safe(async()=>{await P.db.collection('disinfection').doc().set({date:dkey(),createdAt:Date.now(),vehicleId:vid,vehicleName:v.name,product:d.product,type:d.type,zones:d.zones,obs:d.obs,uid:P.uid,intervenant:S.user.name});closeModal()},'Désinfection enregistrée')};
+}
+/* =====================================================================
+   Assistant de contrôle (départ / retour)
+   ===================================================================== */
+function buildSteps(kind,level,vid){
+  const st=[{id:'photos',type:'photos',title:'Photos du véhicule',ic:'camera',help:'Prenez chaque côté du véhicule et le compteur. Touchez une case pour ouvrir l’appareil photo.'}];
+  if(kind==='depart'){
+    const meca=level==='daily'?MECA_DAILY:MECA_DAILY.concat(MECA_EXTRA);
+    st.push({id:'meca',type:'checks',title:'Extérieur et mécanique',ic:'wrench',help:'Vérifiez chaque point. En cas de problème, décrivez-le.',sections:[{id:'meca',title:'Points à vérifier',items:meca,mode:'ok'}]});
+    let secs=[{id:'sani',title:'Matériel sanitaire',items:SANI_DAILY,mode:'ok'}];
+    if(level!=='daily')secs=secs.concat(INV_15.map(s=>({...s,mode:'inv'})));
+    if(level==='monthly')secs=secs.concat(INV_MONTH.map(s=>({...s,mode:'inv'})),[{id:'hyg',title:'Hygiène du véhicule',items:HYGIENE,mode:'ok'},{id:'docs',title:'Documents à bord',items:DOCS,mode:'inv'}]);
+    const eq=equipFor(vid,level);if(eq.length)secs.push({id:'eq',title:'Équipements du véhicule',items:eq,mode:'inv'});
+    st.push({id:'sani',type:'checks',title:level==='daily'?'Sanitaire et équipement':'Équipement et inventaire',ic:'heart-pulse',help:level==='daily'?'Vérifiez le matériel essentiel.':'Vérifiez que chaque élément est présent et en bon état. Déclarez les absences.',sections:secs});
+    st.push({id:'disinf',type:'disinf',title:'Cahier de désinfection',ic:'spray-can',help:'Renseignez la désinfection faite avant ce départ.'});
+  }else{
+    st.push({id:'route',type:'checks',title:'Mécanique pendant la route',ic:'route',help:'Avez-vous remarqué une anomalie pendant la mission ?',sections:[{id:'route',title:'Pendant la route',items:RET_ROUTE,mode:'ok'}]});
+    st.push({id:'rext',type:'checks',title:'Extérieur et cellule',ic:'shield-check',help:'Contrôlez l’état du véhicule au retour.',sections:[{id:'rext',title:'Extérieur',items:RET_EXT,mode:'ok'},{id:'rcell',title:'Cellule sanitaire',items:RET_CELL,mode:'ok'}]});
+  }
+  st.push({id:'end',type:'confirm',title:'Vérifier et valider',ic:'circle-check',help:'Relisez le résumé, ajoutez votre commentaire et validez.'});
+  return st;
+}
+function startWizard(kind,vid,level){
+  const v=vById(vid);if(!v)return;
+  if(kind==='depart'&&inUse(v)&&vState(v).by!==P.uid)return toast(`${v.name} est en service avec ${vState(v).byName}.`,true);
+  if(kind==='depart'&&inUse(v)&&vState(v).by===P.uid)return toast('Vous avez déjà cette ambulance : faites d’abord le retour.',true);
+  if(kind==='retour'&&!(inUse(v)&&vState(v).by===P.uid)&&S.role!=='admin')return toast('Ce véhicule n’est pas en service avec vous.',true);
+  const dep=kind==='retour'?S.insp.find(i=>i.id===vState(v).departId):null;
+  S.wz={kind,vid,level:kind==='depart'?level:(dep&&dep.level)||'daily',step:0,steps:buildSteps(kind,level,vid),photos:{},km:'',fuel:'',checks:{},disinf:{zones:[]},comment:'',busy:0,dep};
+  closeModal();S.route='wizard';render();window.scrollTo(0,0);
+}
+function vWizard(){
+  const w=S.wz,v=vById(w.vid),st=w.steps[w.step];
+  const prog=w.steps.map((s,i)=>`<span class="${i<w.step?'done':i===w.step?'cur':''}"></span>`).join('');
+  let body='';
+  if(st.type==='photos'){
+    body+=`<div class="shots">`+PHOTOS.map(([k,l,req])=>{const ph=w.photos[k];
+      return `<label class="shot ${ph?'ok':''}" id="sh-${k}"><input type="file" accept="image/*" capture="environment" data-photo="${k}">${ph?img(ph,l).replace('data-act="zoom"',''):I(k==='compteur'?'gauge':'camera')}<span class="${ph?'cap':''}">${esc(l)}</span>${req?`<span class="req">${ph?'Fait':'Obligatoire'}</span>`:''}</label>`}).join('')+`</div>`;
+    if(w.dep&&w.dep.photos)body+=`<p class="small muted" style="margin-top:10px">${I('history')} Les photos du départ sont disponibles pour l’administrateur, qui les comparera avec celles-ci.</p>`;
+    const lastKm=curKm(v);
+    body+=`<div class="card" style="margin-top:16px"><div class="two"><div><label class="f" style="margin-top:0">Kilométrage au compteur</label><input class="in" type="number" inputmode="numeric" data-w="km" value="${esc(w.km)}" placeholder="Dernier relevé : ${nf(lastKm)}"></div>
+    <div><label class="f" style="margin-top:0">Carburant</label><div class="chips" id="fuelChips">${FUEL.map(f=>`<button type="button" class="${w.fuel===f?'on':''}" data-act="fuel" data-v="${f}">${f}</button>`).join('')}</div></div></div></div>`;
+  }else if(st.type==='checks'){
+    st.sections.forEach(sec=>{
+      body+=`<div class="checkgroup"><div class="gh"><h3>${esc(sec.title)}</h3><span class="counter" id="cnt-${sec.id}"></span><button class="btn go sm" data-act="allOk" data-s="${sec.id}">${I('check-check')}${sec.mode==='inv'?'Tout présent':'Tout OK'}</button></div>`;
+      sec.items.forEach(([k,l])=>{const key=sec.id+'.'+k;
+        body+=`<div class="ck" id="ck-${cssId(key)}"><div class="q"><div class="lab">${esc(l)}</div><div class="tog">`+
+        (sec.mode==='inv'?`<button class="ok" data-act="setS" data-k="${key}" data-v="ok">Présent</button><button class="abs" data-act="setS" data-k="${key}" data-v="abs">Absent</button><button class="def" data-act="setS" data-k="${key}" data-v="def">Défect.</button>`
+                         :`<button class="ok" data-act="setS" data-k="${key}" data-v="ok">OK</button><button class="pb" data-act="setS" data-k="${key}" data-v="pb">Problème</button>`)+
+        `</div></div><div class="decl"><textarea class="in" data-com="${key}" placeholder="Décrivez le problème (obligatoire)" style="min-height:70px"></textarea><div class="row"><label class="addph">${I('camera')}Ajouter une photo<input type="file" accept="image/*" capture="environment" data-pph="${key}"></label><span id="pph-${cssId(key)}"></span></div></div></div>`;
+      });
+      body+=`</div>`;
+    });
+  }else if(st.type==='disinf'){
+    body+=`<div class="card">${disinfForm('wz',w.disinf)}</div>`;
+  }else{
+    const pbs=problemList(w);const n=Object.values(w.checks).filter(c=>c.s==='ok').length;
+    body+=`<div class="card"><div class="row"><span class="badge go">${I('check-check')}</span><div class="grow"><div class="ttl" style="font-weight:700">${n} point${n>1?'s':''} conforme${n>1?'s':''}</div><div class="small muted">${Object.keys(w.photos).length} photo${Object.keys(w.photos).length>1?'s':''}, ${nf(w.km)} km, carburant ${esc(w.fuel)}</div></div></div></div>`;
+    body+=`<div class="card" style="margin-top:12px"><div class="row"><span class="badge ${pbs.length?'stop':'go'}">${I(pbs.length?'triangle-alert':'shield-check')}</span><div class="grow"><div style="font-weight:700">${pbs.length?pbs.length+' problème'+(pbs.length>1?'s':'')+' déclaré'+(pbs.length>1?'s':''):'Aucun problème déclaré'}</div>${pbs.length?'<div class="small muted">Ils seront envoyés à l’administrateur.</div>':''}</div></div>${pbs.length?`<div class="list" style="margin-top:8px">${pbs.map(p=>`<div class="li"><div class="grow"><div class="ttl">${esc(p.label)}</div><div class="small muted">${p.s==='abs'?'Absent':p.s==='def'?'Défectueux':'Problème'} : ${esc(p.c)}</div></div></div>`).join('')}</div>`:''}</div>`;
+    if(w.kind==='depart')body+=`<div class="card" style="margin-top:12px"><div class="row"><span class="badge blue">${I('spray-can')}</span><div class="grow"><div style="font-weight:700">Désinfection</div><div class="small muted">${esc(w.disinf.type||'')}, ${esc(w.disinf.product||'')}</div></div></div></div>`;
+    body+=`<div class="card" style="margin-top:12px"><label class="f" style="margin-top:0" for="wzCom">Commentaire général (obligatoire)</label><textarea class="in" id="wzCom" data-w="comment" placeholder="État général, informations pour l’équipe ou l’administrateur">${esc(w.comment)}</textarea></div>`;
+  }
+  const last=w.step===w.steps.length-1;
+  return `<div class="wz" style="padding:calc(14px + var(--safe-t)) 16px 130px">
+  <div class="wzhead"><button class="btn sec sm" data-act="wzBack" aria-label="Retour">${I('chevron-left')}</button><div class="grow"><div style="font-weight:800">${w.kind==='depart'?'Départ':'Retour'} ${esc(v.name)}</div><div class="small muted">${w.kind==='depart'?LEVELS[w.level].t:'Contrôle après utilisation'}, étape ${w.step+1} sur ${w.steps.length}</div></div>${plate(v.plate)}</div>
+  <div class="prog">${prog}</div>
+  <div class="steptitle"><span class="ico">${I(st.ic)}</span><h2>${esc(st.title)}</h2></div><p class="muted" style="margin-bottom:14px">${esc(st.help)}</p>
+  ${body}</div>
+  <div class="wzfoot"><div class="in2"><div class="hint" id="wzHint"></div><button class="btn ${last?'go':''}" id="wzNext" data-act="wzNext">${last?I('check')+(w.kind==='depart'?'Valider le départ':'Valider le retour'):'Suivant'+I('chevron-right')}</button></div></div>`;
+}
+const cssId = k => k.replace(/[^a-z0-9_-]/gi,'_');
+function afterWizard(){
+  const w=S.wz;Object.keys(w.checks).forEach(paintCk);wzHint();
+  if(w.steps[w.step].type==='disinf'){const p=$('#wzProd');p&&p.addEventListener('change',()=>$('#wzProdO').classList.toggle('hide',p.value!=='Autre produit'))}
+}
+function paintCk(key){
+  const c=S.wz.checks[key]||{};const el=document.getElementById('ck-'+cssId(key));if(!el)return;
+  el.querySelectorAll('.tog button').forEach(b=>b.classList.toggle('on',b.dataset.v===c.s));
+  el.classList.toggle('need',!!c.s&&c.s!=='ok');
+  const t=el.querySelector('[data-com]');if(t&&c.c!=null&&t.value!==c.c)t.value=c.c;
+  const ph=document.getElementById('pph-'+cssId(key));if(ph)ph.innerHTML=c.ph?img(c.ph,'Photo du problème'):'';
+  hydrate();
+}
+function problemList(w){
+  const out=[];w.steps.forEach(st=>(st.sections||[]).forEach(sec=>sec.items.forEach(([k,l])=>{const c=w.checks[sec.id+'.'+k];if(c&&c.s&&c.s!=='ok')out.push({key:sec.id+'.'+k,label:l,section:sec.title,s:c.s,c:c.c||'',ph:c.ph||null})})));
+  return out;
+}
+function stepCheck(){
+  const w=S.wz,st=w.steps[w.step];const miss=[];
+  if(w.busy)miss.push('envoi des photos en cours');
+  if(st.type==='photos'){const n=PHOTOS.filter(p=>p[2]&&!w.photos[p[0]]).length;if(n)miss.push(n+' photo'+(n>1?'s':'')+' obligatoire'+(n>1?'s':''));
+    if(!w.km)miss.push('kilométrage');if(!w.fuel)miss.push('carburant');}
+  if(st.type==='checks'){let n=0,c=0;st.sections.forEach(sec=>sec.items.forEach(([k])=>{const x=w.checks[sec.id+'.'+k];if(!x||!x.s)n++;else if(x.s!=='ok'&&!(x.c||'').trim())c++}));
+    if(n)miss.push(n+' point'+(n>1?'s':'')+' à vérifier');if(c)miss.push(c+' problème'+(c>1?'s':'')+' à décrire');}
+  if(st.type==='disinf'){const d=readDisinf('wz');if(!d.productSel)miss.push('produit');if(!d.type)miss.push('type');if(!d.zones.length)miss.push('zones traitées');}
+  if(st.type==='confirm'&&!w.comment.trim())miss.push('commentaire général');
+  return miss;
+}
+function wzHint(){
+  const w=S.wz;const st=w.steps[w.step];
+  if(st.type==='checks')st.sections.forEach(sec=>{let n=0,pb=0;sec.items.forEach(([k])=>{const x=w.checks[sec.id+'.'+k];if(x&&x.s){n++;if(x.s!=='ok')pb++}});const el=$('#cnt-'+sec.id);if(el){el.textContent=(pb?pb+' problème'+(pb>1?'s':'')+', ':'')+n+'/'+sec.items.length;el.className='counter'+(pb?' pb':n===sec.items.length?' full':'')}});
+  const m=stepCheck();const h=$('#wzHint');if(h)h.textContent=m.length?'Reste : '+m.join(', '):'Tout est prêt';
+}
+function wzNext(){
+  const w=S.wz,st=w.steps[w.step];
+  if(st.type==='disinf')w.disinf=readDisinf('wz');
+  const m=stepCheck();
+  if(m.length){toast('À compléter : '+m.join(', '),true);
+    if(st.type==='checks'){const first=[...document.querySelectorAll('.ck')].find(el=>{const k=el.querySelector('[data-com]').dataset.com;const c=w.checks[k];return !c||!c.s||(c.s!=='ok'&&!(c.c||'').trim())});first&&first.scrollIntoView({behavior:'smooth',block:'center'})}return}
+  if(st.type==='photos'){const v=vById(w.vid);const km=Number(w.km);
+    if(w.kind==='retour'&&w.dep&&w.dep.km&&km<w.dep.km)return toast(`Le kilométrage doit être au moins celui du départ (${nf(w.dep.km)} km).`,true);
+    if(w.kind==='depart'&&km<curKm(v)-5)return toast(`Le kilométrage est inférieur au dernier relevé (${nf(curKm(v))} km). Vérifiez le compteur.`,true);}
+  if(w.step<w.steps.length-1){w.step++;render();window.scrollTo(0,0);return}
+  submitWizard();
+}
+function wzBack(){
+  const w=S.wz;if(w.steps[w.step].type==='disinf')w.disinf=readDisinf('wz');
+  if(w.step>0){w.step--;render();window.scrollTo(0,0);return}
+  modal(`<div class="sh"><h2>Abandonner le contrôle ?</h2></div><p class="muted">Les informations saisies seront perdues et le véhicule ne sera pas marqué comme ${w.kind==='depart'?'parti':'revenu'}.</p>
+  <div class="row" style="margin-top:18px"><button class="btn ghost grow" data-act="closeM">Continuer le contrôle</button><button class="btn stop grow" id="cxYes">Abandonner</button></div>`);
+  $('#cxYes').onclick=()=>{layer.innerHTML='';S.wz=null;S.route=S.role==='admin'?'dash':'home';render()};
+}
+async function submitWizard(){
+  const w=S.wz;const v=vById(w.vid);const btn=$('#wzNext');btn.disabled=true;btn.innerHTML='Enregistrement…';
+  const now=Date.now(),today=dkey();const vRef=P.db.doc('vehicles/'+w.vid);const iRef=P.db.collection('inspections').doc();
+  const pbs=problemList(w);
+  const doc={kind:w.kind,level:w.level,vehicleId:w.vid,vehicleName:v.name,date:today,createdAt:now,uid:P.uid,employee:S.user.name,
+    photos:w.photos,km:Number(w.km),fuel:w.fuel,checks:w.checks,comment:w.comment.trim(),problems:pbs.length};
+  if(w.kind==='retour'){doc.departId=w.dep?w.dep.id:(vState(v).departId||null);doc.departAt=vState(v).since||null}
+  if(w.kind==='depart')doc.disinf=w.disinf;
+  try{
+    await P.db.runTransaction(async t=>{
+      const s=await t.get(vRef);const cur=(s.exists&&s.data().state)||{status:'free'};
+      if(w.kind==='depart'&&cur.status==='in_use')throw {code:'busy',msg:`${v.name} vient de partir avec ${cur.byName}.`};
+      if(w.kind==='retour'&&(cur.status!=='in_use'||(cur.by!==P.uid&&S.role!=='admin')))throw {code:'busy',msg:'Ce véhicule n’est plus en service avec vous.'};
+      t.set(iRef,doc);
+      const newKm=Math.max(Number(s.exists&&s.data().km)||0,Number(w.km));
+      t.update(vRef,{km:newKm,state:w.kind==='depart'?{status:'in_use',by:P.uid,byName:S.user.name,since:now,departId:iRef.id,level:w.level}:{status:'free',lastBy:S.user.name,lastReturn:now}});
+    });
+    if(pbs.length){const bt=P.db.batch();pbs.forEach(p=>bt.set(P.db.collection('issues').doc(),{vehicleId:w.vid,vehicleName:v.name,inspId:iRef.id,kind:w.kind,label:p.label,section:p.section,type:p.s,comment:p.c,photo:p.ph,date:today,createdAt:now,uid:P.uid,employee:S.user.name,status:'open'}));await bt.commit().catch(e=>console.warn(e))}
+    if(w.kind==='depart')await P.db.collection('disinfection').doc().set({date:today,createdAt:now,vehicleId:w.vid,vehicleName:v.name,product:w.disinf.product,type:w.disinf.type,zones:w.disinf.zones,obs:w.disinf.obs,uid:P.uid,intervenant:S.user.name,inspId:iRef.id}).catch(e=>console.warn(e));
+    S.wz=null;S.route=S.role==='admin'?'dash':'home';render();window.scrollTo(0,0);
+    toast(w.kind==='depart'?`Départ enregistré à ${fT(now)}. Bonne mission !`:`Retour enregistré à ${fT(now)}. ${v.name} est de nouveau disponible.`);
+  }catch(e){console.warn(e);btn.disabled=false;btn.innerHTML=I('check')+(w.kind==='depart'?'Valider le départ':'Valider le retour');icons();toast(e.msg||errMsg(e),true)}
+}
+/* =====================================================================
+   ESPACE ADMINISTRATEUR
+   ===================================================================== */
+function vDash(){
+  const today=dkey(),month=mkey();
+  const dep=S.insp.filter(i=>i.kind==='depart'),ret=S.insp.filter(i=>i.kind==='retour');
+  const dT=dep.filter(i=>i.date===today).length,dM=dep.filter(i=>i.date.startsWith(month)).length,rT=ret.filter(i=>i.date===today).length,rM=ret.filter(i=>i.date.startsWith(month)).length;
+  const oi=openIssues();const A=alerts();const late=A.filter(a=>a.ic==='wrench'&&a.lvl==='stop').length;
+  let out=`<div class="row wrap"><div class="grow"><h1>Tableau de bord</h1><p class="muted" style="margin-top:4px;text-transform:capitalize">${esc(fD(today))}</p></div></div>
+  <div class="kpis" style="margin-top:16px">
+    <div class="kpi"><div class="n">${dT}</div><div class="l">Départs aujourd’hui</div><div class="m">${dM} ce mois-ci</div></div>
+    <div class="kpi"><div class="n">${rT}</div><div class="l">Retours aujourd’hui</div><div class="m">${rM} ce mois-ci</div></div>
+    <div class="kpi ${oi.length?'stop':''}"><div class="n">${oi.length}</div><div class="l">Signalements ouverts</div><div class="m">${S.issues.filter(i=>i.date.startsWith(month)).length} ce mois-ci</div></div>
+    <div class="kpi ${late?'stop':''}"><div class="n">${late}</div><div class="l">Entretiens en retard</div><div class="m">${A.filter(a=>a.ic==='wrench'&&a.lvl==='warn').length} à prévoir bientôt</div></div>
+  </div>`;
+  if(A.length)out+=`<div class="sect"><h2>Alertes</h2><div class="card list">${A.slice(0,12).map(a=>`<div class="li click" data-act="go" data-r="${a.go[0]}" data-p="${esc(a.go[1]||'')}"><span class="badge ${a.lvl}">${I(a.ic)}</span><div class="grow"><div class="ttl">${esc(a.t)}</div><div class="small muted">${esc(a.s)}</div></div>${I('chevron-right')}</div>`).join('')}${A.length>12?`<p class="small muted" style="padding-top:8px">Et ${A.length-12} autre${A.length-12>1?'s':''}.</p>`:''}</div></div>`;
+  out+=`<div class="sect"><h2>La flotte aujourd’hui</h2>`;
+  if(!S.vehicles.length)out+=`<div class="card empty">${I('ambulance')}<p>Aucun véhicule.</p><button class="btn" style="margin-top:12px" data-act="go" data-r="fleet" data-p="veh">${I('plus')}Ajouter une ambulance</button></div>`;
+  else out+=`<div class="grid">${S.vehicles.map(v=>{const st=vState(v);const busy=inUse(v);const off=v.status==='maintenance';const dd=dep.filter(i=>i.vehicleId===v.id&&i.date===today);const pb=S.issues.filter(i=>i.vehicleId===v.id&&i.status!=='resolved').length;
+    return `<article class="veh ${busy?'busy':''} ${off?'off':''}" style="cursor:pointer" data-act="go" data-r="vehicle" data-p="${v.id}"><div class="band"></div><div class="body">
+    <div class="row">${plate(v.plate)}<span class="grow"></span>${off?'<span class="status off">Hors service</span>':busy?'<span class="status busy">En service</span>':'<span class="status go">Disponible</span>'}</div>
+    <div><div class="name">${esc(v.name)}</div><div class="small muted">${busy?`Avec ${esc(st.byName)} depuis ${fT(st.since)}`:dd.length?`${dd.length} départ${dd.length>1?'s':''} aujourd’hui`:'Pas encore sorti aujourd’hui'}</div></div>
+    <div class="tags">${dd.length?'<span class="tag go">Contrôle du jour fait</span>':'<span class="tag">Contrôle du jour non fait</span>'}${pb?`<span class="tag stop">${pb} signalement${pb>1?'s':''}</span>`:''}</div></div></article>`}).join('')}</div>`;
+  out+=`</div><div class="sect"><div class="row"><h2 class="grow">Derniers signalements</h2></div><div class="card list">`+
+    (S.issues.slice(0,15).map(issueRow).join('')||`<div class="empty">${I('shield-check')}<p>Aucun signalement.</p></div>`)+`</div></div>`;
+  return out;
+}
+function issueRow(i){return `<div class="li click" data-act="issue" data-id="${i.id}"><span class="badge ${i.status==='resolved'?'go':'stop'}">${I(i.status==='resolved'?'check':'triangle-alert')}</span><div class="grow"><div class="ttl">${esc(i.vehicleName)} : ${esc(i.label)}</div><div class="small muted">${esc(i.comment)}<br>${fDs(i.date)} à ${fT(i.createdAt)}, ${esc(i.employee)}</div></div><span class="tag ${i.status==='resolved'?'go':'stop'}">${i.status==='resolved'?'Corrigé':'À traiter'}</span></div>`}
+function sheetIssue(id){
+  const i=S.issues.find(x=>x.id===id);if(!i)return;
+  modal(`<div class="sh"><span class="badge ${i.status==='resolved'?'go':'stop'}">${I(i.status==='resolved'?'check':'triangle-alert')}</span><h2>${esc(i.label)}</h2><button class="iconbtn" style="background:var(--grey-2);color:var(--ink)" data-act="closeM" aria-label="Fermer">${I('x')}</button></div>
+  <div class="list"><div class="li"><div class="grow small muted">Véhicule</div><b>${esc(i.vehicleName)}</b></div><div class="li"><div class="grow small muted">Déclaré par</div><b>${esc(i.employee)}</b></div>
+  <div class="li"><div class="grow small muted">Quand</div><b>${fDs(i.date)} à ${fT(i.createdAt)}</b></div><div class="li"><div class="grow small muted">Contrôle</div><b>${i.kind==='retour'?'Retour':'Départ'}, ${esc(i.section||'')}</b></div>
+  <div class="li"><div class="grow small muted">Type</div><b>${i.type==='abs'?'Absent':i.type==='def'?'Défectueux':'Problème'}</b></div></div>
+  <div class="card flat" style="margin-top:12px">${esc(i.comment)}</div>
+  ${i.photo?`<div style="margin-top:12px" class="thumbs">${img(i.photo,i.label)}</div>`:''}
+  ${i.status==='resolved'?`<div class="reminder info" style="margin-top:14px">${I('check')}<div>Corrigé le ${fDs(i.resolvedDate)} par ${esc(i.resolvedBy)}${i.resolution?` : ${esc(i.resolution)}`:''}</div></div><button class="btn ghost full" style="margin-top:12px" id="isReopen">Rouvrir le signalement</button>`
+  :`<label class="f">Ce qui a été fait</label><textarea class="in" id="isRes" placeholder="Réparation, remplacement, intervention du garage…"></textarea><button class="btn go full" style="margin-top:12px" id="isDone">${I('check')}Marquer comme corrigé</button>`}`);
+  hydrate();
+  const d=$('#isDone');if(d)d.onclick=()=>safe(async()=>{await P.db.doc('issues/'+id).update({status:'resolved',resolution:$('#isRes').value.trim(),resolvedBy:S.user.name,resolvedDate:dkey(),resolvedAt:Date.now()});closeModal()},'Signalement corrigé');
+  const r=$('#isReopen');if(r)r.onclick=()=>safe(async()=>{await P.db.doc('issues/'+id).update({status:'open'});closeModal()},'Signalement rouvert');
+}
+
+/* ---------------- Planning administrateur ---------------- */
+function vAdminPlan(){
+  const dots=k=>{const r=[];if(S.insp.some(i=>i.date===k&&i.kind==='depart'))r.push('blue');if(S.issues.some(i=>i.date===k))r.push('stop');
+    if(S.disinf.some(d=>d.date===k))r.push('go');if(S.planning[k]&&Object.keys(S.planning[k].assign||{}).length)r.push('ink');
+    if(k>=dkey()&&S.vehicles.some(v=>{const d=dueInfo(v.id);return d.n15===k||d.nm===k}))r.push('warn');return r};
+  let out=`<h1>Planning</h1><p class="muted" style="margin:4px 0 16px">Touchez un jour pour voir tout ce qui s’est passé et attribuer les véhicules.</p>`;
+  out+=calendar(S.calMonth,dots,S.calDay)+`<div class="legend"><span><i class="d-blue"></i>Départs</span><span><i class="d-stop"></i>Signalements</span><span><i class="d-go"></i>Désinfections</span><span><i class="d-ink"></i>Affectations</span><span><i class="d-warn"></i>Contrôle 15 jours ou mensuel prévu</span></div></div>`;
+  const k=S.calDay;const deps=S.insp.filter(i=>i.date===k&&i.kind==='depart').slice().reverse();
+  out+=`<div class="sect"><h2 style="text-transform:capitalize">${esc(fD(k))}</h2>`;
+  // affectations
+  const a=(S.planning[k]&&S.planning[k].assign)||{};const emps=S.users.filter(u=>!u.disabled);
+  out+=`<div class="card"><h3>Affectations du jour</h3><p class="small muted" style="margin:4px 0 6px">L’employé verra le véhicule en tête de sa liste avec la mention « Attribuée à vous ».</p><div class="list">`+
+    S.vehicles.map(v=>`<div class="li"><div class="grow"><div class="ttl">${esc(v.name)}</div></div><select class="in" style="max-width:220px;min-height:42px" data-assign="${v.id}" data-day="${k}"><option value="">Personne</option>${emps.map(u=>`<option value="${u.id}" ${a[v.id]===u.id?'selected':''}>${esc(u.name)}</option>`).join('')}</select></div>`).join('')+`</div></div>`;
+  // utilisations
+  out+=`<div class="card" style="margin-top:14px"><h3>Utilisations des véhicules</h3>`;
+  if(!deps.length)out+=`<div class="empty">Aucun départ ce jour-là.</div>`;
+  deps.forEach(d=>out+=usageBlock(d,S.params.openUse===d.id));
+  const notOut=k<=dkey()?S.vehicles.filter(v=>!deps.some(d=>d.vehicleId===v.id)):[];
+  if(notOut.length)out+=`<p class="small muted" style="margin-top:10px">Sans départ ce jour-là : ${notOut.map(v=>esc(v.name)).join(', ')}.</p>`;
+  out+=`</div>`;
+  const iss=S.issues.filter(i=>i.date===k);
+  out+=`<div class="card" style="margin-top:14px"><h3>Signalements</h3><div class="list">${iss.map(issueRow).join('')||'<div class="empty">Aucun signalement ce jour-là.</div>'}</div></div>`;
+  const dis=S.disinf.filter(x=>x.date===k);
+  out+=`<div class="card" style="margin-top:14px"><h3>Désinfections</h3><div class="list">${dis.map(x=>`<div class="li"><span class="badge go">${I('spray-can')}</span><div class="grow"><div class="ttl">${esc(x.vehicleName)} : ${esc(x.type)}</div><div class="small muted">${esc(x.product)}, ${esc((x.zones||[]).join(', '))}<br>${fT(x.createdAt)}, ${esc(x.intervenant)}</div></div><span class="tag go">Validé</span></div>`).join('')||'<div class="empty">Aucune désinfection ce jour-là.</div>'}</div></div></div>`;
+  return out;
+}
+function usageBlock(d,open){
+  const r=retourOf(d.id);const pb=(d.problems||0)+(r?r.problems||0:0);
+  let h=`<div class="li click" data-act="toggleUse" data-id="${d.id}" style="border-bottom:1px solid #EEF1F5"><span class="badge ${pb?'stop':'blue'}">${I('ambulance')}</span><div class="grow"><div class="ttl">${esc(d.vehicleName)}, ${esc(d.employee)}</div>
+  <div class="small muted">Départ ${fT(d.createdAt)} (${LEVELS[d.level]?LEVELS[d.level].t.toLowerCase():'contrôle'}), ${r?`retour ${fT(r.createdAt)}${r.date!==d.date?' le '+fDs(r.date):''}, ${nf(r.km-d.km)} km`:'<b style="color:var(--warn)">retour pas encore fait</b>'}${pb?`, ${pb} problème${pb>1?'s':''}`:''}</div></div>${I(open?'chevron-up':'chevron-down')}</div>`;
+  if(open)h+=compareBlock(d,r);
+  return h;
+}
+function compareBlock(d,r){
+  let h=`<div style="padding:10px 0 16px"><div class="cmp"><div></div><div class="small" style="font-weight:700">Départ ${fT(d.createdAt)}</div><div class="small" style="font-weight:700">Retour ${r?fT(r.createdAt):''}</div></div>`;
+  PHOTOS.forEach(([k,l])=>h+=`<div class="cmp"><div class="small" style="font-weight:600">${esc(l)}</div>${img(d.photos&&d.photos[k],'Départ, '+l)}${r?img(r.photos&&r.photos[k],'Retour, '+l):'<div class="none">Pas encore</div>'}</div>`);
+  h+=`<p class="small" style="margin-top:10px">Kilométrage : ${nf(d.km)}${r?' puis '+nf(r.km):''}. Carburant : ${esc(d.fuel||'—')}${r?' puis '+esc(r.fuel||'—'):''}.</p>`;
+  [d,r].filter(Boolean).forEach(x=>{const pbs=Object.entries(x.checks||{}).filter(([k,c])=>c.s&&c.s!=='ok');
+    h+=`<div class="card flat" style="margin-top:10px"><b>${x.kind==='depart'?'Départ':'Retour'}</b> par ${esc(x.employee)} : ${pbs.length?`${pbs.length} problème${pbs.length>1?'s':''}`:'tout est conforme'}
+    ${pbs.map(([k,c])=>`<div class="small" style="margin-top:6px;color:#8A1820">${c.s==='abs'?'Absent':c.s==='def'?'Défectueux':'Problème'} : ${esc(labelOf(k))}. ${esc(c.c||'')}</div>`).join('')}
+    ${x.comment?`<div class="small muted" style="margin-top:8px">Commentaire : ${esc(x.comment)}</div>`:''}</div>`});
+  return h+`</div>`;
+}
+function labelOf(key){
+  const [sid,k]=key.split('.');const all=[['meca',MECA_DAILY.concat(MECA_EXTRA)],['sani',SANI_DAILY],['hyg',HYGIENE],['docs',DOCS],['route',RET_ROUTE],['rext',RET_EXT],['rcell',RET_CELL],...INV_15.concat(INV_MONTH).map(s=>[s.id,s.items])];
+  const f=all.find(a=>a[0]===sid);const it=f&&f[1].find(x=>x[0]===k);if(it)return it[1];
+  if(sid==='eq'){const e=S.equip.find(e=>'eq_'+e.id===k);if(e)return e.name}return key;
+}
+
+/* ---------------- Maintenance ---------------- */
+function vMaint(){
+  let out=`<h1>Maintenance</h1><p class="muted" style="margin:4px 0 16px">Rappels d’entretien selon le kilométrage et la date de la dernière intervention.</p>`;
+  if(!S.vehicles.length)return out+`<div class="card empty">Ajoutez d’abord des véhicules.</div>`;
+  const all=[];S.vehicles.forEach(v=>maintItems(v.id).forEach(x=>all.push({v,x})));
+  const urgent=all.filter(a=>a.x.st==='stop'||a.x.st==='warn').sort((a,b)=>(a.x.st==='stop'?0:1)-(b.x.st==='stop'?0:1));
+  out+=`<div class="card"><h3>À prévoir</h3><div class="list">${urgent.map(({v,x})=>`<div class="li"><span class="badge ${x.st}">${I('wrench')}</span><div class="grow"><div class="ttl">${esc(v.name)} : ${esc(x.lbl)}</div><div class="small muted">${x.st==='stop'?'En retard':'Bientôt'}${x.nextKm!=null?`, prévu à ${nf(x.nextKm)} km (actuel ${nf(x.km)})`:''}${x.nextDate?`, le ${fDs(x.nextDate)}`:''}</div></div><button class="btn go sm" data-act="maintDone" data-v="${v.id}" data-k="${x.k}">Fait</button></div>`).join('')||'<div class="empty">Aucun entretien en retard ou proche.</div>'}</div></div>`;
+  const dots=k=>{const r=[];all.forEach(({x})=>{if(x.nextDate===k)r.push(x.st==='stop'?'stop':'warn')});return r};
+  out+=`<div class="sect"><h2>Calendrier des rappels</h2>`+calendar(S.calMonth,dots,S.calDay)+`<div class="legend"><span><i class="d-warn"></i>Entretien prévu</span><span><i class="d-stop"></i>Entretien en retard</span></div></div>`;
+  const dayItems=all.filter(a=>a.x.nextDate===S.calDay);
+  if(dayItems.length)out+=`<div class="card" style="margin-top:12px"><h3 style="text-transform:capitalize">${esc(fD(S.calDay))}</h3><div class="list">${dayItems.map(({v,x})=>`<div class="li"><span class="badge ${x.st}">${I('wrench')}</span><div class="grow ttl">${esc(v.name)} : ${esc(x.lbl)}</div></div>`).join('')}</div></div>`;
+  out+=`</div>`;
+  S.vehicles.forEach(v=>out+=`<div class="sect"><div class="row">${plate(v.plate)}<h2 class="grow">${esc(v.name)}</h2></div>${maintTable(v.id)}</div>`);
+  return out;
+}
+function maintTable(vid){
+  const items=maintItems(vid);
+  return `<div class="card"><p class="small muted">Kilométrage actuel : <b>${nf(curKm(vById(vid)))} km</b>, relevé aux contrôles.</p><div class="tw"><table><thead><tr><th>Entretien</th><th>Dernière fois</th><th>Prochaine fois</th><th></th></tr></thead><tbody>${items.map(x=>{
+    const st={ok:['go','À jour'],warn:['warn','Bientôt'],stop:['stop','En retard'],none:['','À renseigner']}[x.st];
+    const nx=[x.nextKm!=null?`${nf(x.nextKm)} km${x.remKm!=null?` <span class="small muted">(${x.remKm<0?'dépassé de '+nf(-x.remKm):'dans '+nf(x.remKm)} km)</span>`:''}`:'',x.nextDate?`${fDs(x.nextDate)}${x.remD!=null?` <span class="small muted">(${x.remD<0?(-x.remD)+' j de retard':'dans '+x.remD+' j'})</span>`:''}`:''].filter(Boolean).join('<br>')||'—';
+    return `<tr><td><b>${esc(x.lbl)}</b><div class="small muted">Tous les ${[x.intKm?nf(x.intKm)+' km':'',x.intD?x.intD+' jours':''].filter(Boolean).join(' ou ')||'—'}</div><span class="tag ${st[0]}" style="margin-top:4px;display:inline-block">${st[1]}</span></td>
+    <td class="small">${x.last.lastDate?fDs(x.last.lastDate):'—'}${x.last.lastKm!=null?'<br>'+nf(x.last.lastKm)+' km':''}${x.last.note?`<div class="muted">${esc(x.last.note)}</div>`:''}</td><td class="small">${nx}</td>
+    <td style="white-space:nowrap"><button class="btn go sm" data-act="maintDone" data-v="${vid}" data-k="${x.k}">Fait</button> <button class="btn ghost sm" data-act="maintInt" data-v="${vid}" data-k="${x.k}" aria-label="Modifier l’intervalle">${I('settings-2')}</button></td></tr>`}).join('')}</tbody></table></div></div>`;
+}
+function saveMaint(vid,k,it){const cur=S.maint[vid]||{};const items={...(cur.items||{}),[k]:it};safe(async()=>{await P.db.doc('maintenance/'+vid).set({items,updatedAt:Date.now()});closeModal()},'Enregistré')}
+
+/* ---------------- Véhicules et équipe ---------------- */
+function vFleet(){
+  const t=S.sub;const tabs=[['veh','Véhicules'],['equip','Équipements'],['staff','Personnel'],['disinf','Cahier de désinfection']];
+  let out=`<h1>Véhicules et équipe</h1><div class="subtabs" style="margin-top:14px">${tabs.map(([k,l])=>`<button class="${t===k?'on':''}" data-act="sub" data-t="${k}">${l}</button>`).join('')}</div>`;
+  if(t==='veh'){
+    out+=`<div class="row" style="margin-bottom:12px"><p class="muted grow">${S.vehicles.length} véhicule${S.vehicles.length>1?'s':''}</p><button class="btn" data-act="editV">${I('plus')}Ajouter une ambulance</button></div><div class="grid">`+
+    S.vehicles.map(v=>`<article class="veh ${inUse(v)?'busy':''} ${v.status==='maintenance'?'off':''}"><div class="band"></div><div class="body"><div class="row">${plate(v.plate)}<span class="grow"></span><button class="btn ghost sm" data-act="editV" data-id="${v.id}">${I('pencil')}Modifier</button></div>
+    <div><div class="name">${esc(v.name)}</div><div class="small muted">${esc([v.model,v.year].filter(Boolean).join(', '))}${v.model||v.year?'. ':''}${nf(curKm(v))} km</div></div>
+    <div class="tags">${v.insuranceUntil?`<span class="tag">Assurance jusqu’au ${fDs(v.insuranceUntil)}</span>`:''}${v.ctUntil?`<span class="tag">CT jusqu’au ${fDs(v.ctUntil)}</span>`:''}${S.files.filter(f=>f.vehicleId===v.id).length?`<span class="tag blue">${S.files.filter(f=>f.vehicleId===v.id).length} document${S.files.filter(f=>f.vehicleId===v.id).length>1?'s':''}</span>`:''}</div>
+    <button class="btn sec full" data-act="go" data-r="vehicle" data-p="${v.id}">Historique, photos et documents</button></div></article>`).join('')+`</div>`;
+    if(!S.vehicles.length)out+=`<div class="card empty">${I('ambulance')}<p>Ajoutez votre première ambulance.</p></div>`;
+  }else if(t==='equip'){
+    out+=`<div class="row" style="margin-bottom:12px"><p class="muted grow">Les équipements ajoutés ici apparaissent dans les contrôles choisis.</p><button class="btn" data-act="editE">${I('plus')}Ajouter un équipement</button></div><div class="card list">`+
+    (S.equip.map(e=>{const v=e.vehicleId?vById(e.vehicleId):null;const r=e.expiry?diffDays(dkey(),e.expiry):null;
+      return `<div class="li"><span class="badge ${r!=null&&r<0?'stop':r!=null&&r<=30?'warn':'blue'}">${I('package')}</span><div class="grow"><div class="ttl">${esc(e.name)}${e.qty?` ×${e.qty}`:''}</div><div class="small muted">${esc(e.category||'')}${e.category?'. ':''}${v?esc(v.name):'Tous les véhicules'}. Contrôlé : ${(e.levels||[]).map(l=>({daily:'quotidien','15j':'15 jours',monthly:'mensuel'}[l])).join(', ')||'jamais'}${e.serial?`. N° ${esc(e.serial)}`:''}${e.expiry?`. Validité : ${fDs(e.expiry)}`:''}</div></div><button class="btn ghost sm" data-act="editE" data-id="${e.id}">${I('pencil')}</button></div>`}).join('')||`<div class="empty">${I('package')}<p>Aucun équipement enregistré.</p></div>`)+`</div>`;
+  }else if(t==='staff'){
+    const admins=S.users.filter(u=>u.role==='admin'&&!u.disabled);
+    out+=`<div class="card"><h3>Déclarer un employé</h3><p class="small muted" style="margin-top:4px">Quand cette personne créera son compte avec cet e-mail, son nom, sa fonction et son rôle seront appliqués automatiquement.</p>
+    <div class="two"><div><label class="f">Nom et prénom</label><input class="in" id="stN"></div><div><label class="f">E-mail</label><input class="in" id="stE" type="email" autocapitalize="off"></div></div>
+    <div class="two"><div><label class="f">Fonction</label><input class="in" id="stF" placeholder="Ambulancier, auxiliaire, régulateur…"></div><div><label class="f">Rôle</label><select class="in" id="stR"><option value="employee">Employé</option><option value="admin" ${admins.length>=2?'disabled':''}>Administrateur${admins.length>=2?' (2 sur 2 pris)':''}</option></select></div></div>
+    <button class="btn" style="margin-top:14px" data-act="addStaff">${I('user-plus')}Enregistrer</button></div>`;
+    out+=`<div class="card" style="margin-top:14px"><h3>Comptes actifs</h3><p class="small muted" style="margin-top:4px">Administrateurs : ${admins.length} sur 2.</p><div class="list">`+S.users.map(u=>`<div class="li" style="${u.disabled?'opacity:.5':''}"><span class="badge ${u.role==='admin'?'blue':''}">${I(u.role==='admin'?'shield':'user-round')}</span><div class="grow"><div class="ttl">${esc(u.name)}</div><div class="small muted">${u.role==='admin'?'Administrateur':esc(u.function||'Employé')}. ${esc(u.email||'')}${u.declared?'':'. Inscrit sans déclaration préalable'}</div></div>${u.id===P.uid?'<span class="tag">Vous</span>':`<button class="btn ghost sm" data-act="toggleU" data-id="${u.id}">${u.disabled?'Réactiver':'Désactiver'}</button>`}</div>`).join('')+`</div></div>`;
+    const pend=S.staff.filter(s=>!S.users.some(u=>(u.email||'').toLowerCase()===s.id));
+    out+=`<div class="card" style="margin-top:14px"><h3>Déclarés, pas encore inscrits</h3><div class="list">${pend.map(s=>`<div class="li"><span class="badge">${I('mail')}</span><div class="grow"><div class="ttl">${esc(s.name)}</div><div class="small muted">${esc(s.function||'')}${s.function?'. ':''}${s.role==='admin'?'Administrateur':'Employé'}. ${esc(s.id)}</div></div><button class="btn ghost sm" data-act="delStaff" data-id="${esc(s.id)}" aria-label="Supprimer">${I('trash-2')}</button></div>`).join('')||'<div class="empty">Personne en attente.</div>'}</div></div>`;
+  }else out+=vDisinfRegistry(true);
+  return out;
+}
+
+/* ---------------- Fiche véhicule (admin) ---------------- */
+function vVehicle(){
+  const v=vById(S.params.id);if(!v)return `<button class="btn sec sm" data-act="nav" data-r="${S.role==='admin'?'dash':'home'}">${I('chevron-left')}Retour</button><div class="empty">Véhicule introuvable.</div>`;
+  const st=vState(v);const t=S.params.vt||'hist';
+  let out=`<button class="btn sec sm" data-act="nav" data-r="dash">${I('chevron-left')}Tableau de bord</button>
+  <div class="card" style="margin-top:12px"><div class="row wrap">${plate(v.plate,true)}<div class="grow"><h1 style="font-size:26px">${esc(v.name)}</h1><div class="muted">${esc([v.model,v.year].filter(Boolean).join(', '))} ${nf(curKm(v))} km</div></div>
+  ${inUse(v)?`<div><span class="status busy">Avec ${esc(st.byName)} depuis ${fT(st.since)}</span><br><button class="btn ghost sm" style="margin-top:8px" data-act="forceFree" data-id="${v.id}">${I('unlock')}Libérer le véhicule</button></div>`:v.status==='maintenance'?'<span class="status off">Hors service</span>':'<span class="status go">Disponible</span>'}</div></div>
+  <div class="subtabs" style="margin-top:14px">${[['hist','Historique et photos'],['docs','Documents'],['maint','Maintenance']].map(([k,l])=>`<button class="${t===k?'on':''}" data-act="vt" data-t="${k}">${l}</button>`).join('')}</div>`;
+  if(t==='maint')return out+maintTable(v.id);
+  if(t==='docs'){
+    const fl=S.files.filter(f=>f.vehicleId===v.id);
+    out+=`<div class="card"><div class="row wrap"><p class="grow muted">Carte grise, assurance, contrôle technique, factures de garage… PDF ou image, 8 Mo maximum.</p><label class="btn">${I('upload')}Ajouter un document<input type="file" accept="application/pdf,image/*" data-file="${v.id}" hidden></label></div>
+    <div class="list" style="margin-top:8px">${fl.map(f=>`<div class="li"><span class="badge blue">${I('file-text')}</span><div class="grow"><div class="ttl">${esc(f.name)}</div><div class="small muted">${(f.size/1024/1024).toFixed(1)} Mo, ajouté le ${fDs(dkey(new Date(f.uploadedAt)))} par ${esc(f.by)}</div></div><button class="btn sec sm" data-act="openFile" data-id="${f.id}">${I('download')}Ouvrir</button> <button class="btn ghost sm" data-act="delFile" data-id="${f.id}" aria-label="Supprimer">${I('trash-2')}</button></div>`).join('')||'<div class="empty">Aucun document.</div>'}</div></div>`;
+    return out;
+  }
+  const f=S.params.hf||'';const deps=departs(v.id).filter(d=>!f||d.date===f);
+  out+=`<div class="card row wrap"><label class="grow small muted">Filtrer par date<input class="in" type="date" data-hf value="${f}" style="margin-top:6px"></label>${f?`<button class="btn ghost sm" data-act="hfClear">Tout afficher</button>`:''}<button class="btn sec sm noprint" data-act="print">${I('printer')}Imprimer</button></div>`;
+  out+=`<div class="card" style="margin-top:14px">${deps.slice(0,60).map(d=>usageBlock(d,S.params.openUse===d.id)).join('')||'<div class="empty">Aucune utilisation.</div>'}</div>`;
+  return out;
+}
+/* =====================================================================
+   Fenêtres, actions et événements
+   ===================================================================== */
+function modal(html){layer.innerHTML=`<div class="modal" data-act="closeBg"><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`;icons()}
+function closeModal(){layer.innerHTML='';if(S.route!=='wizard')render()}
+function confirmBox(msg,yes,label='Supprimer'){modal(`<div class="sh"><h2>Confirmer</h2></div><p>${msg}</p><div class="row" style="margin-top:18px"><button class="btn ghost grow" data-act="closeM">Annuler</button><button class="btn stop grow" id="cfYes">${label}</button></div>`);$('#cfYes').onclick=async()=>{await yes();closeModal()}}
+let tt;function toast(m,err){clearTimeout(tt);let t=document.querySelector('.toast');if(!t){t=document.createElement('div');document.body.appendChild(t)}t.className='toast'+(err?' err':'');t.setAttribute('role','status');t.textContent=m;tt=setTimeout(()=>t.remove(),err?5000:3500)}
+function errMsg(e){
+  const F={'permission-denied':'Action non autorisée pour votre compte.','unavailable':'Pas de connexion internet.','auth/email-already-in-use':'Un compte existe déjà avec cet e-mail : connectez-vous.','auth/invalid-email':'Adresse e-mail invalide.','auth/weak-password':'Mot de passe trop court : 6 caractères minimum.','auth/invalid-credential':'E-mail ou mot de passe incorrect.','auth/wrong-password':'E-mail ou mot de passe incorrect.','auth/user-not-found':'Aucun compte avec cet e-mail : créez votre compte.','auth/too-many-requests':'Trop d’essais. Réessayez dans quelques minutes.','auth/network-request-failed':'Pas de connexion internet.','auth/missing-email':'Écrivez votre e-mail.'};
+  return (e&&F[e.code])||('Erreur : '+((e&&(e.message||e.code))||'inconnue'));
+}
+async function safe(fn,ok){try{await fn();ok&&toast(ok)}catch(e){console.warn(e);toast(errMsg(e),true)}}
+const go=(r,p)=>{S.route=r;if(r==='vehicle'){S.params.id=p;S.params.vt='hist';S.params.hf='';S.params.openUse=null}else if(r==='fleet'&&p)S.sub=p;if(S.role==='admin'&&r!=='vehicle')lsSet('amb_r_admin',r);render();window.scrollTo(0,0)};
+
+function sheetEditV(id){
+  const v=id?vById(id):{};
+  modal(`<div class="sh"><h2>${id?'Modifier':'Nouvelle'} ambulance</h2><button class="iconbtn" style="background:var(--grey-2);color:var(--ink)" data-act="closeM" aria-label="Fermer">${I('x')}</button></div>
+  <div class="two"><div><label class="f" style="margin-top:0">Nom ou numéro</label><input class="in" id="evN" value="${esc(v.name||'')}" placeholder="Ambulance 04"></div><div><label class="f" style="margin-top:0">Immatriculation</label><input class="in" id="evP" value="${esc(v.plate||'')}" placeholder="AB-123-CD" style="text-transform:uppercase"></div></div>
+  <div class="two"><div><label class="f">Modèle</label><input class="in" id="evM" value="${esc(v.model||'')}" placeholder="Renault Master"></div><div><label class="f">Année</label><input class="in" id="evY" type="number" value="${esc(v.year||'')}"></div></div>
+  <div class="two"><div><label class="f">Kilométrage actuel</label><input class="in" id="evK" type="number" inputmode="numeric" value="${esc(v.km||'')}"></div><div><label class="f">N° de série (VIN)</label><input class="in" id="evV" value="${esc(v.vin||'')}"></div></div>
+  <div class="two"><div><label class="f">Assurance valable jusqu’au</label><input class="in" id="evI" type="date" value="${esc(v.insuranceUntil||'')}"></div><div><label class="f">Contrôle technique jusqu’au</label><input class="in" id="evC" type="date" value="${esc(v.ctUntil||'')}"></div></div>
+  <label class="f">État</label><div class="seg" id="evS"><button type="button" class="${v.status!=='maintenance'?'on':''}" data-act="segPick" data-v="ok">En service</button><button type="button" class="${v.status==='maintenance'?'on':''}" data-act="segPick" data-v="maintenance">Hors service</button></div>
+  <label class="f">Notes</label><textarea class="in" id="evO">${esc(v.notes||'')}</textarea>
+  <button class="btn full" style="margin-top:16px" id="evSave">${I('check')}Enregistrer</button>
+  ${id?`<button class="btn ghost full" style="margin-top:8px;color:var(--stop)" id="evDel">${I('trash-2')}Supprimer ce véhicule</button>`:''}`);
+  $('#evSave').onclick=()=>{const name=$('#evN').value.trim();if(!name)return toast('Le nom est obligatoire.',true);
+    const d={name,plate:$('#evP').value.trim().toUpperCase(),model:$('#evM').value.trim(),year:$('#evY').value.trim(),km:Number($('#evK').value)||0,vin:$('#evV').value.trim(),insuranceUntil:$('#evI').value,ctUntil:$('#evC').value,status:document.querySelector('#evS .on').dataset.v,notes:$('#evO').value.trim()};
+    safe(async()=>{if(id)await P.db.doc('vehicles/'+id).update(d);else await P.db.collection('vehicles').doc().set({...d,createdAt:Date.now(),state:{status:'free'}});closeModal()},'Ambulance enregistrée')};
+  const del=$('#evDel');if(del)del.onclick=()=>confirmBox(`Supprimer <b>${esc(v.name)}</b> ? L’historique des contrôles est conservé.`,()=>safe(()=>P.db.doc('vehicles/'+id).delete(),'Véhicule supprimé'));
+}
+function sheetEditE(id){
+  const e=id?S.equip.find(x=>x.id===id):{levels:['15j','monthly']};
+  modal(`<div class="sh"><h2>${id?'Modifier l’équipement':'Nouvel équipement'}</h2><button class="iconbtn" style="background:var(--grey-2);color:var(--ink)" data-act="closeM" aria-label="Fermer">${I('x')}</button></div>
+  <div class="two"><div><label class="f" style="margin-top:0">Nom</label><input class="in" id="eeN" value="${esc(e.name||'')}" placeholder="Aspirateur de mucosités"></div><div><label class="f" style="margin-top:0">Catégorie</label><input class="in" id="eeC" value="${esc(e.category||'')}" placeholder="Réanimation, immobilisation…"></div></div>
+  <div class="two"><div><label class="f">Quantité</label><input class="in" id="eeQ" type="number" value="${esc(e.qty||'')}"></div><div><label class="f">N° de série</label><input class="in" id="eeS" value="${esc(e.serial||'')}"></div></div>
+  <div class="two"><div><label class="f">Date de validité ou de péremption</label><input class="in" id="eeX" type="date" value="${esc(e.expiry||'')}"></div><div><label class="f">Véhicule</label><select class="in" id="eeV"><option value="">Tous les véhicules</option>${S.vehicles.map(v=>`<option value="${v.id}" ${e.vehicleId===v.id?'selected':''}>${esc(v.name)}</option>`).join('')}</select></div></div>
+  <label class="f">À vérifier pendant le contrôle</label><div class="chips" id="eeL">${[['daily','Quotidien'],['15j','15 jours'],['monthly','Mensuel']].map(([k,l])=>`<button type="button" class="${(e.levels||[]).includes(k)?'on':''}" data-act="zone" data-z="${k}">${l}</button>`).join('')}</div>
+  <label class="f">Notes</label><textarea class="in" id="eeO">${esc(e.notes||'')}</textarea>
+  <button class="btn full" style="margin-top:16px" id="eeSave">${I('check')}Enregistrer</button>${id?`<button class="btn ghost full" style="margin-top:8px;color:var(--stop)" id="eeDel">${I('trash-2')}Supprimer</button>`:''}`);
+  $('#eeSave').onclick=()=>{const name=$('#eeN').value.trim();if(!name)return toast('Le nom est obligatoire.',true);
+    const d={name,category:$('#eeC').value.trim(),qty:Number($('#eeQ').value)||null,serial:$('#eeS').value.trim(),expiry:$('#eeX').value,vehicleId:$('#eeV').value,levels:[...document.querySelectorAll('#eeL .on')].map(b=>b.dataset.z),notes:$('#eeO').value.trim()};
+    safe(async()=>{await (id?P.db.doc('equipment/'+id):P.db.collection('equipment').doc()).set(d);closeModal()},'Équipement enregistré')};
+  const del=$('#eeDel');if(del)del.onclick=()=>confirmBox(`Supprimer <b>${esc(e.name)}</b> ?`,()=>safe(()=>P.db.doc('equipment/'+id).delete(),'Équipement supprimé'));
+}
+
+/* ---------- Documents (découpés en morceaux dans Firestore) ---------- */
+const CHUNK=700000;
+function fileToB64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]);r.onerror=rej;r.readAsDataURL(file)})}
+async function uploadFile(vid,file){
+  if(file.size>8*1024*1024)return toast('Fichier trop lourd : 8 Mo maximum.',true);
+  toast('Envoi du document…');
+  const b64=await fileToB64(file);const n=Math.ceil(b64.length/CHUNK);const ref=P.db.collection('files').doc();
+  await safe(async()=>{
+    for(let i=0;i<n;i++)await ref.collection('chunks').doc(String(i)).set({d:b64.slice(i*CHUNK,(i+1)*CHUNK)});
+    await ref.set({vehicleId:vid,name:file.name,size:file.size,type:file.type||'application/pdf',chunks:n,uploadedAt:Date.now(),by:S.user.name});
+  },'Document ajouté');
+}
+async function openFile(id){
+  const f=S.files.find(x=>x.id===id);if(!f)return;toast('Ouverture…');
+  try{let b64='';for(let i=0;i<f.chunks;i++){const s=await P.db.doc(`files/${id}/chunks/${i}`).get();b64+=s.data().d}
+    const bin=atob(b64);const arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
+    const url=URL.createObjectURL(new Blob([arr],{type:f.type}));const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';
+    if(!/^image|pdf/.test(f.type))a.download=f.name;document.body.appendChild(a);a.click();a.remove();
+  }catch(e){toast(errMsg(e),true)}
+}
+
+/* ---------- Actions ---------- */
+const ACT={
+  nav(t){go(t.dataset.r)},
+  go(t){go(t.dataset.r,t.dataset.p)},
+  logout(){P.auth&&P.auth.signOut()},
+  authTab(t){S.authTab=t.dataset.t;pickedRole='employee';render()},
+  pickRole(t){if(t.disabled)return;pickedRole=t.dataset.v;document.querySelectorAll('#roleSeg button').forEach(b=>b.classList.toggle('on',b===t))},
+  forgot(){const em=($('#lgE')||{}).value;if(!em)return toast('Écrivez d’abord votre e-mail.',true);safe(()=>P.auth.sendPasswordResetEmail(em.trim()),'E-mail envoyé : suivez le lien pour choisir un nouveau mot de passe.')},
+  chooseDep(t){sheetChooseDep(t.dataset.id)},
+  startDep(t){startWizard('depart',t.dataset.id,t.dataset.l)},
+  startRet(t){startWizard('retour',t.dataset.id)},
+  wzNext(){wzNext()},wzBack(){wzBack()},
+  fuel(t){S.wz.fuel=t.dataset.v;document.querySelectorAll('#fuelChips button').forEach(b=>b.classList.toggle('on',b===t));wzHint()},
+  setS(t){const k=t.dataset.k;const c=S.wz.checks[k]||{};c.s=t.dataset.v;S.wz.checks[k]=c;paintCk(k);wzHint();if(c.s!=='ok'){const x=document.querySelector(`[data-com="${k}"]`);x&&x.focus()}},
+  allOk(t){const st=S.wz.steps[S.wz.step];const sec=st.sections.find(s=>s.id===t.dataset.s);sec.items.forEach(([k])=>{const key=sec.id+'.'+k;const c=S.wz.checks[key];if(!c||!c.s){S.wz.checks[key]={s:'ok'};paintCk(key)}});wzHint()},
+  zone(t){t.classList.toggle('on');if(S.route==='wizard')wzHint()},
+  segPick(t){t.parentElement.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===t))},
+  zoom(t){if(!t.src)return;layer.innerHTML=`<div class="lb" data-act="closeLb"><img src="${t.src}" alt=""><p>${esc(t.dataset.cap||'')}</p></div>`},
+  closeLb(){layer.innerHTML=''},
+  closeBg(t,e){if(e.target===t){layer.innerHTML='';if(S.route!=='wizard')render()}},
+  closeM(){closeModal()},
+  calNav(t){const [y,m]=S.calMonth.split('-').map(Number);const d=new Date(y,m-1+Number(t.dataset.n),1);S.calMonth=mkey(d);render()},
+  calToday(){S.calMonth=mkey();S.calDay=dkey();render()},
+  calDay(t){S.calDay=t.dataset.d;render()},
+  toggleUse(t){S.params.openUse=S.params.openUse===t.dataset.id?null:t.dataset.id;render()},
+  issue(t){sheetIssue(t.dataset.id)},
+  newDisinf(){sheetNewDisinf()},
+  sub(t){S.sub=t.dataset.t;render()},
+  vt(t){S.params.vt=t.dataset.t;render()},
+  hfClear(){S.params.hf='';render()},
+  print(){window.print()},
+  editV(t){sheetEditV(t.dataset.id)},
+  editE(t){sheetEditE(t.dataset.id)},
+  forceFree(t){const v=vById(t.dataset.id);confirmBox(`Libérer <b>${esc(v.name)}</b> sans contrôle de retour ? Le véhicule redeviendra disponible pour tous.`,()=>safe(()=>P.db.doc('vehicles/'+v.id).update({state:{status:'free',lastBy:S.user.name+' (libéré par l’administrateur)',lastReturn:Date.now()}}),'Véhicule libéré'),'Libérer')},
+  addStaff(){const n=$('#stN').value.trim(),em=$('#stE').value.trim().toLowerCase(),f=$('#stF').value.trim(),r=$('#stR').value;
+    if(!n||!em||!em.includes('@'))return toast('Nom et e-mail valides obligatoires.',true);
+    safe(async()=>{await P.db.doc('staff/'+em).set({name:n,email:em,function:f,role:r,createdAt:Date.now()});const u=S.users.find(x=>(x.email||'')===em);if(u&&r!=='admin')await P.db.doc('users/'+u.id).update({name:n,function:f});render()},'Employé enregistré')},
+  delStaff(t){confirmBox(`Retirer <b>${esc(t.dataset.id)}</b> de la liste ?`,()=>safe(()=>P.db.doc('staff/'+t.dataset.id).delete(),'Retiré'))},
+  toggleU(t){const u=S.users.find(x=>x.id===t.dataset.id);safe(()=>P.db.doc('users/'+u.id).update({disabled:!u.disabled}),u.disabled?'Compte réactivé':'Compte désactivé')},
+  openFile(t){openFile(t.dataset.id)},
+  delFile(t){const f=S.files.find(x=>x.id===t.dataset.id);confirmBox(`Supprimer <b>${esc(f.name)}</b> ?`,()=>safe(async()=>{for(let i=0;i<f.chunks;i++)await P.db.doc(`files/${f.id}/chunks/${i}`).delete();await P.db.doc('files/'+f.id).delete()},'Document supprimé'))},
+  maintDone(t){const vid=t.dataset.v,k=t.dataset.k;const v=vById(vid);const lbl=MAINT.find(m=>m[0]===k)[1];
+    modal(`<div class="sh"><h2>${esc(lbl)}</h2><button class="iconbtn" style="background:var(--grey-2);color:var(--ink)" data-act="closeM" aria-label="Fermer">${I('x')}</button></div><p class="muted">${esc(v.name)}</p>
+    <div class="two"><div><label class="f">Date de l’intervention</label><input class="in" type="date" id="mdD" value="${dkey()}"></div><div><label class="f">Kilométrage</label><input class="in" type="number" id="mdK" value="${curKm(v)}"></div></div>
+    <label class="f">Note : garage, pièces, coût</label><input class="in" id="mdN"><button class="btn go full" style="margin-top:16px" id="mdSave">${I('check')}Enregistrer l’intervention</button>`);
+    $('#mdSave').onclick=()=>{const cur=(S.maint[vid]&&S.maint[vid].items&&S.maint[vid].items[k])||{};saveMaint(vid,k,{...cur,lastDate:$('#mdD').value,lastKm:Number($('#mdK').value)||0,note:$('#mdN').value.trim()})}},
+  maintInt(t){const vid=t.dataset.v,k=t.dataset.k;const x=maintItems(vid).find(i=>i.k===k);
+    modal(`<div class="sh"><h2>Intervalle : ${esc(x.lbl)}</h2><button class="iconbtn" style="background:var(--grey-2);color:var(--ink)" data-act="closeM" aria-label="Fermer">${I('x')}</button></div><div class="two"><div><label class="f">Tous les (km)</label><input class="in" type="number" id="miK" value="${x.intKm||''}" placeholder="Aucun"></div><div><label class="f">Tous les (jours)</label><input class="in" type="number" id="miD" value="${x.intD||''}" placeholder="Aucun"></div></div><button class="btn full" style="margin-top:16px" id="miSave">Enregistrer</button>`);
+    $('#miSave').onclick=()=>{const cur=(S.maint[vid]&&S.maint[vid].items&&S.maint[vid].items[k])||{};saveMaint(vid,k,{...cur,intKm:Number($('#miK').value)||null,intDays:Number($('#miD').value)||null})}}
+};
+document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t)return;const a=ACT[t.dataset.act];if(a)a(t,e)});
+document.addEventListener('submit',e=>{e.preventDefault();
+  if(e.target.id==='fLogin'){const em=$('#lgE').value.trim(),pw=$('#lgP').value;safe(()=>P.auth.signInWithEmailAndPassword(em,pw))}
+  if(e.target.id==='fSignup')doSignup();
+});
 document.addEventListener('input',e=>{const t=e.target;
-  if(t.dataset.com&&S.form){const k=t.dataset.com;const c=S.form.checks[k]||{};c.c=t.value;S.form.checks[k]=c;progress()}
-  if(t.dataset.chg&&S.form&&['km','fuel','comment'].includes(t.dataset.chg)){S.form[t.dataset.chg]=t.value;progress()}
+  if(S.route==='wizard'){
+    if(t.dataset.w){S.wz[t.dataset.w]=t.value;wzHint()}
+    if(t.dataset.com){const k=t.dataset.com;const c=S.wz.checks[k]||{};c.c=t.value;S.wz.checks[k]=c;wzHint()}
+  }
 });
 document.addEventListener('change',async e=>{const t=e.target;
-  if(t.dataset.chg==='histDate'){if(t.value){S.histDate=t.value;render()}return}
-  if(t.dataset.chg&&S.form&&['km','fuel','comment'].includes(t.dataset.chg)){S.form[t.dataset.chg]=t.value;progress();return}
-  if(t.dataset.photo&&S.form){
-    const file=t.files&&t.files[0];if(!file)return;const k=t.dataset.photo;const f=S.form;const v=vById(f.vid);
-    const label=(v?v.name:'')+' • '+TYPES[f.type].lbl+(k!=='__extra'?' • '+ANGLES.find(a=>a[0]===k)[1]:'');
-    const slot=k==='__extra'?null:document.getElementById('slot-'+k);slot&&slot.classList.add('busy');f.busy++;progress();
-    try{const ref=await savePhoto(file,label);if(S.form!==f)return;if(k==='__extra'){f.extra.push(ref);paintExtra()}else{f.photos[k]=ref;paintSlot(k)}toast('Photo ajoutée ✓')}
-    catch(err){console.warn(err);toast('Photo non enregistrée : '+errMsg(err),true)}
-    finally{f.busy--;slot&&slot.classList.remove('busy');t.value='';progress()}
-  }
+  if(t.id==='ndProd'){$('#ndProdO').classList.toggle('hide',t.value!=='Autre produit')}
+  if(t.dataset.f){S.params.df[t.dataset.f]=t.value;render();return}
+  if(t.hasAttribute('data-hf')){S.params.hf=t.value;render();return}
+  if(t.dataset.assign){const day=t.dataset.day,vid=t.dataset.assign;const cur=(S.planning[day]&&S.planning[day].assign)||{};const a={...cur};if(t.value)a[vid]=t.value;else delete a[vid];
+    safe(()=>P.db.doc('planning/'+day).set({assign:a}),'Affectation enregistrée');return}
+  if(t.dataset.file){const f=t.files&&t.files[0];if(f)await uploadFile(t.dataset.file,f);t.value='';return}
+  if(S.route!=='wizard')return;
+  const w=S.wz,v=vById(w.vid);
+  if(t.dataset.photo){const f=t.files&&t.files[0];if(!f)return;const k=t.dataset.photo;const lbl=PHOTOS.find(p=>p[0]===k)[1];const box=$('#sh-'+k);box&&box.classList.add('busy');w.busy++;wzHint();
+    try{const id=await savePhoto(f,`${v.name}, ${w.kind==='depart'?'départ':'retour'}, ${lbl}`);if(S.wz!==w)return;w.photos[k]=id;
+      if(box){box.classList.add('ok');box.innerHTML=`<input type="file" accept="image/*" capture="environment" data-photo="${k}">${img(id,lbl).replace('data-act="zoom"','')}<span class="cap">${esc(lbl)}</span>${PHOTOS.find(p=>p[0]===k)[2]?'<span class="req">Fait</span>':''}`}}
+    catch(err){toast('Photo non enregistrée. '+errMsg(err),true)}finally{w.busy--;box&&box.classList.remove('busy');wzHint()}return}
+  if(t.dataset.pph){const f=t.files&&t.files[0];if(!f)return;const k=t.dataset.pph;w.busy++;wzHint();toast('Envoi de la photo…');
+    try{const id=await savePhoto(f,`${v.name}, problème`);const c=w.checks[k]||{};c.ph=id;w.checks[k]=c;paintCk(k);toast('Photo ajoutée')}catch(err){toast(errMsg(err),true)}finally{w.busy--;wzHint()}}
 });
-document.addEventListener('submit',e=>{if(e.target.id!=='loginForm')return;e.preventDefault();
-  const em=document.getElementById('lgE').value.trim(),pw=document.getElementById('lgP').value;if(!em||!pw)return toast('E-mail et mot de passe obligatoires',true);
-  safe(()=>P.auth.signInWithEmailAndPassword(em,pw))});
 window.addEventListener('online',()=>soft());window.addEventListener('offline',()=>soft());
 init();
+
 </script>
 </body>
 </html>
