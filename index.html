@@ -386,7 +386,7 @@ function ensureAdminSlot(){
 }
 function subscribe(){
   const add=f=>P.unsubs.push(f);
-  const on=(name,q,fn)=>add(q.onSnapshot(s=>{fn(s);S.loaded[name]=1;soft()},e=>{console.warn(name,e);S.err='Impossible de charger '+name+'. Vérifiez la connexion.';soft()}));
+  const on=(name,q,fn,quiet)=>add(q.onSnapshot(s=>{fn(s);S.loaded[name]=1;soft()},e=>{console.warn(name,e);if(quiet)return;S.err=e&&e.code==='permission-denied'?'Accès refusé à : '+name+'.':'Impossible de charger '+name+'. Vérifiez la connexion.';soft()}));
   const map=s=>s.docs.map(d=>({id:d.id,...d.data()}));
   const sortName=(a,b)=>(a.name||'').localeCompare(b.name||'','fr',{numeric:true});
   on('véhicules',P.db.collection('vehicles'),s=>{S.vehicles=map(s).sort(sortName);S.err=null});
@@ -399,7 +399,7 @@ function subscribe(){
   on('planning',P.db.collection('planning'),s=>{const m={};s.docs.forEach(d=>m[d.id]=d.data());S.planning=m});
   if(S.role==='admin'){
     on('documents',P.db.collection('files'),s=>S.files=map(s).sort((a,b)=>b.uploadedAt-a.uploadedAt));
-    on('personnel déclaré',P.db.collection('staff'),s=>S.staff=map(s).sort(sortName));
+    on('personnel déclaré',P.db.collection('staff'),s=>S.staff=map(s).sort(sortName),true);
   }
   clearTimeout(P.loadTimer);P.loadTimer=setTimeout(()=>{if(P.uid&&!S.loaded['véhicules']){S.err='Les données ne répondent pas. Vérifiez votre connexion internet.';soft()}},12000);
 }
